@@ -10,4 +10,4 @@ target/
 *.iws
 *.iml
 *.ipr
-*.properties
+application.properties
