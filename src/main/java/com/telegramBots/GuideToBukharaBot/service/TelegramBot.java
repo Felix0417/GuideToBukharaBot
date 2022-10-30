@@ -1,6 +1,7 @@
 package com.telegramBots.GuideToBukharaBot.service;
 
 import com.telegramBots.GuideToBukharaBot.config.BotConfig;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -8,6 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.LongPollingBot;
 
+@Slf4j
 @Component
 public class TelegramBot extends TelegramLongPollingBot implements LongPollingBot {
     private final BotConfig config;
@@ -44,6 +46,7 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
 
     private void startCommandReceived(long chatId, String name) {
         String answer = String.format("Hi, %s, nice to meet you", name);
+        log.info("Replied to user " + name);
         sendMessage(chatId, answer);
     }
 
@@ -55,7 +58,7 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
         try {
             execute(message);
         } catch (TelegramApiException e) {
-
+            log.error(" Error occurred " + e.getMessage());
         }
     }
 }
