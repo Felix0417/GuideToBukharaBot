@@ -11,3 +11,4 @@ target/
 *.iml
 *.ipr
 application.properties
+*.yml
