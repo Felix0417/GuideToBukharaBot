@@ -1,8 +1,7 @@
 package com.telegramBots.GuideToBukharaBot.service;
 
 import com.telegramBots.GuideToBukharaBot.config.BotConfig;
-import com.telegramBots.GuideToBukharaBot.model.User;
-import com.telegramBots.GuideToBukharaBot.model.UserRepository;
+import com.telegramBots.GuideToBukharaBot.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,28 +28,15 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ArticleDataRepository articleDataRepository;
+
     private final BotConfig config;
 
-    private final String USER_STATUS_TOURIST = "TOURIST";
-    private final String USER_STATUS_LOCAL = "LOCAL";
-
-    private final String ATTRACTIONS_OF_CITY = "ATTRACTIONS";
-    private final String FOOD_OF_CITY = "FOOD";
-    private final String HOTELS = "HOTEL";
-
-    final static String HELP_TEXT = "Список комманд \n " +
-            "- /start используется для перезапуска бота  \n" +
-            " - /my_data отображает ваши персональные данные(имя, фамилия и id \n" +
-            " - /about отображает создателя бота и права на него";
-
-    final static String USER_DATA = "Вот ваши данные: \n\n " +
-            "Ваш ID - %d \n\n" +
-            "Ваше имя пользователя - %s \n\n" +
-            "Дата первого общения с этим ботом - \n %s";
+    Tags tags = null;
 
     public TelegramBot(BotConfig config) {
         this.config = config;
-
 
         List<BotCommand> listOfCommands = new ArrayList<>();
         listOfCommands.add(new BotCommand("/start", "Перезапустить бота"));
@@ -77,42 +63,68 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
 
     @Override
     public void onUpdateReceived(Update update) {
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            String messageText = update.getMessage().getText();
-            long chatId = update.getMessage().getChatId();
+        long chatId;
+        String messageText;
 
+        if (update.hasMessage() && update.getMessage().hasText()) {
+            chatId = update.getMessage().getChatId();
+            messageText = update.getMessage().getText();
             switch (messageText) {
                 case "/start":
                     startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
-                    registeredUser(update, false);
+                    registeredUser(update);
                     break;
                 case "/my_data":
                     Optional<User> user = userRepository.findById(update.getMessage().getChat().getId());
                     String regDate = new SimpleDateFormat("d.MM.yyyy hh:mm").format(user.get().getRegisteredAt());
-                    sendMessage(chatId, String.format(USER_DATA, user.get().getChatId(), user.get().getUserName(), regDate));
+                    sendMessage(chatId, String.format(
+                            articleDataRepository.getArticleDataById(Tags.USER_DATA.getDescription()).getData(),
+                            user.get().getChatId(), user.get().getUserName(), regDate));
                     break;
                 case "/help":
-                    sendMessage(chatId, HELP_TEXT);
+                    sendMessage(chatId, articleDataRepository.getArticleDataById(Tags.HELP.getDescription()).getData());
                     break;
                 case "/about":
-
+                    sendMessage(chatId, articleDataRepository.getArticleDataById(Tags.ABOUT_BOT.getDescription()).getData());
                     break;
                 case "/settings":
-                    changeYourStatus(update);
+                    changeUserStatus(update);
                     break;
                 default:
-                    sendMessage(chatId, "Извините, команда не распознана, как насчет " +
-                            "воспользоваться кнопками или кнопкой меню в поле ввода?");
+                    if (messageText.contains("/addArticle") && chatId == config.getOwner()){
+                        addDataToArticleRepository(chatId, messageText.replaceFirst("/addArticle ",""));
+                    }else {
+                        wrongRequestFromUser(chatId);
+                    }
             }
+
         } else if (update.hasCallbackQuery()) {
-            String textOfMessage = update.getCallbackQuery().getData();
-            if (textOfMessage.equals(USER_STATUS_LOCAL) || textOfMessage.equals(USER_STATUS_TOURIST)) {
-                registerUserStatus(update.getCallbackQuery().getData(), update.getCallbackQuery().getMessage().getChatId());
+            messageText = update.getCallbackQuery().getData();
+            chatId = update.getCallbackQuery().getFrom().getId();
+            if (Arrays.stream(Tags.values()).map(Tags::toString).anyMatch(x -> x.equalsIgnoreCase(messageText))){
+                tags = Tags.valueOf(messageText);
+                switch (tags){
+                    case TOURIST_CHOICE:
+                    case LOCAL_CHOICE:
+                        registerUserStatus(tags.getDescription(),chatId);
+                        break;
+                    case ATTRACTIONS_ITEM:
+                        attractionSectionMenu(chatId);
+                        break;
+                    case FOOD_ITEM:
+                        foodSectionMenu(chatId);
+                        break;
+                    case HOTELS_ITEM:
+                        hotelsSectionMenu(chatId);
+                        break;
+                    default:
+                        sendMessage(chatId, articleDataRepository.getArticleDataById(tags.getDescription()).getData());
+                }
             }
         }
     }
 
-    private void registeredUser(Update update, boolean setStatus) {
+    private void registeredUser(Update update) {
         Message message = update.getMessage();
         var chatId = message.getChatId();
         if (userRepository.findById(chatId).isEmpty()) {
@@ -128,40 +140,25 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
 
             userRepository.save(user);
             log.info("User saved: " + user);
-            changeYourStatus(update);
+            changeUserStatus(update);
         }
     }
 
-    private void changeYourStatus(Update update){
+    private void changeUserStatus(Update update) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(update.getMessage().getChatId()));
         message.setText("Выберите ваш статус");
 
-        InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> inLineButtons = new ArrayList<>();
-        List<InlineKeyboardButton> changeButtons = new ArrayList<>();
-        var asTourist = new InlineKeyboardButton();
-        asTourist.setText("Турист");
-        asTourist.setCallbackData(USER_STATUS_TOURIST);
+        List<List<InlineKeyboardButton>> inLineButtons =
+                new ArrayList<>(List.of(List.of(inlineKeyboardButtons("Турист", Tags.TOURIST_CHOICE.toString())),
+                        List.of(inlineKeyboardButtons("Местный / Релокант", Tags.LOCAL_CHOICE.toString()))));
 
-        var asLocal = new InlineKeyboardButton();
-        asLocal.setText("Местный / Релокант");
-        asLocal.setCallbackData(USER_STATUS_LOCAL);
-
-        changeButtons.add(asTourist);
-        changeButtons.add(asLocal);
-
-        inLineButtons.add(changeButtons);
-        keyboardMarkup.setKeyboard(inLineButtons);
-
-        message.setReplyMarkup(keyboardMarkup);
-
-        executeMessage(message);
+        updateKeyboardMarkup(message, inLineButtons);
     }
 
-    private void registerUserStatus(String data, long chatId){
+    private void registerUserStatus(String data, long chatId) {
         User user = userRepository.findById(chatId).get();
-        user.setStatus(statusUpdate(data));
+        user.setStatus(data);
         userRepository.save(user);
         log.info("User has update settings: " + user);
 
@@ -171,44 +168,92 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
         startMainMenu(chatId);
     }
 
-    private String statusUpdate(String  message){
-            return USER_STATUS_TOURIST.equals(message)? USER_STATUS_TOURIST : USER_STATUS_LOCAL;
-    }
-
-    private void startMainMenu(long chatId){
+    private void startMainMenu(long chatId) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText("Какие данные вам интересны?");
 
-        InlineKeyboardMarkup mainMenuMarkup = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> mainMenuButtons = new ArrayList<>();
+        List<List<InlineKeyboardButton>> mainMenuLines = new ArrayList<>();
 
-        InlineKeyboardButton placeAttractions = new InlineKeyboardButton();
-        placeAttractions.setText("Достопримечательности");
-        placeAttractions.setCallbackData(ATTRACTIONS_OF_CITY);
+        mainMenuLines.add(List.of(inlineKeyboardButtons("Достопримечательности", Tags.ATTRACTIONS_ITEM.toString())));
+        mainMenuLines.add(List.of(inlineKeyboardButtons("Где поесть", Tags.FOOD_ITEM.toString())));
+        mainMenuLines.add(List.of(inlineKeyboardButtons("Гостиницы", Tags.HOTELS_ITEM.toString())));
 
-        InlineKeyboardButton restaurants = new InlineKeyboardButton();
-        restaurants.setText("Где поесть");
-        restaurants.setCallbackData(FOOD_OF_CITY);
+        updateKeyboardMarkup(message, mainMenuLines);
+    }
 
-        InlineKeyboardButton hotels = new InlineKeyboardButton();
-        hotels.setText("Гостиницы");
-        hotels.setCallbackData(HOTELS);
+    public void attractionSectionMenu(long chatId){
+        SendMessage attractionsMessage = new SendMessage();
+        attractionsMessage.setChatId(String.valueOf(chatId));
+        attractionsMessage.setText("Выберите локацию:");
 
-        mainMenuButtons.add(List.of(placeAttractions));
-        mainMenuButtons.add(List.of(restaurants));
-        mainMenuButtons.add((List.of(hotels)));
-        mainMenuMarkup.setKeyboard(mainMenuButtons);
+        List<List<InlineKeyboardButton>> attractionLines = new ArrayList<>();
 
-        message.setReplyMarkup(mainMenuMarkup);
+        attractionLines.add(List.of(inlineKeyboardButtons("В Городе", Tags.ATTRACTIONS_INSIDE_CITY.toString())));
+        attractionLines.add(List.of(inlineKeyboardButtons("За Городом", Tags.ATTRACTIONS_OUTSIDE_CITY.toString())));
+        attractionLines.add(List.of(inlineKeyboardButtons("Гиды", Tags.CONTACT_GUIDES.toString())));
+
+        updateKeyboardMarkup(attractionsMessage, attractionLines);
+    }
+
+    public void foodSectionMenu(long chatId){
+        SendMessage foodChangeMessage = new SendMessage();
+        foodChangeMessage.setChatId(String.valueOf(chatId));
+        foodChangeMessage.setText("Выберите интересующую вас кухню:");
+
+        List<List<InlineKeyboardButton>> foodLine = new ArrayList<>();
+
+        foodLine.add(List.of(inlineKeyboardButtons("Национальная кухня",Tags.NATIONAL_KITCHEN.toString())));
+        foodLine.add(List.of(inlineKeyboardButtons("Европейская кухня", Tags.EUROPEAN_KITCHEN.toString())));
+        foodLine.add(List.of(inlineKeyboardButtons("Азиатская кухня", Tags.ASIAN_KITCHEN.toString())));
+
+        updateKeyboardMarkup(foodChangeMessage, foodLine);
+    }
+
+    public void hotelsSectionMenu(long chatId){
+        SendMessage hotelsMessage = new SendMessage();
+        hotelsMessage.setChatId(String.valueOf(chatId));
+        hotelsMessage.setText("Выберите тип отеля:");
+
+        List<List<InlineKeyboardButton>> hotelsLine = new ArrayList<>();
+
+        hotelsLine.add(List.of(inlineKeyboardButtons("Гостиница / Отель", Tags.HOTELS.toString())));
+        hotelsLine.add(List.of(inlineKeyboardButtons("Гостевые дома", Tags.GUEST_HOUSES.toString())));
+
+        updateKeyboardMarkup(hotelsMessage, hotelsLine);
+    }
+
+    public void updateKeyboardMarkup(SendMessage message, List<List<InlineKeyboardButton>> buttons){
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        inlineKeyboardMarkup.setKeyboard(buttons);
+
+        message.setReplyMarkup(inlineKeyboardMarkup);
         executeMessage(message);
+    }
 
+    public InlineKeyboardButton inlineKeyboardButtons(String text, String callbackData){
+        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+        inlineKeyboardButton.setText(text);
+        inlineKeyboardButton.setCallbackData(callbackData);
+        return inlineKeyboardButton;
     }
 
     private void startCommandReceived(long chatId, String name) {
-        String answer = String.format("Привет, %s, рад тебя видеть", name);
+        String answer = String.format("Привет, %s, рад тебя видеть! " +
+                "Вот наши разделы:", name);
         log.info("Replied to user " + name);
         sendMessage(chatId, answer);
+        startMainMenu(chatId);
+    }
+
+    public void addDataToArticleRepository(long chatId, String message){
+        List<String> data = List.of(message.split("#\n"));
+        ArticleData newArticle = new ArticleData();
+        newArticle.setId(data.get(0));
+        newArticle.setData(data.get(1));
+        articleDataRepository.save(newArticle);
+
+        sendMessage(chatId, "Данные успешно добавлены");
     }
 
     private void sendMessage(long chatId, String textToSend) {
@@ -219,11 +264,16 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
         executeMessage(message);
     }
 
-    private void executeMessage(SendMessage message){
+    private void executeMessage(SendMessage message) {
         try {
             execute(message);
         } catch (TelegramApiException e) {
             log.error(" Error occurred " + e.getMessage());
         }
+    }
+
+    void wrongRequestFromUser(long chatId){
+        sendMessage(chatId, "Извините, команда не распознана, как насчет " +
+                "воспользоваться кнопкой меню в поле ввода?");
     }
 }
