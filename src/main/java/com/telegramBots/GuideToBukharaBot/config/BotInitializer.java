@@ -1,8 +1,8 @@
 package com.telegramBots.GuideToBukharaBot.config;
 
 import com.telegramBots.GuideToBukharaBot.service.TelegramBot;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -13,9 +13,9 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 @Slf4j
 @Component
+@AllArgsConstructor
 public class BotInitializer {
 
-    @Autowired
     TelegramBot bot;
 
     @EventListener({ContextRefreshedEvent.class})
