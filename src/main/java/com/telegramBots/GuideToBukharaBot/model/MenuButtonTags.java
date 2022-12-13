@@ -28,6 +28,10 @@ public enum MenuButtonTags {
     ATTRACTIONS(Tags.ATTRACTIONS_ITEM.toString(), "Достопримечательности"),
     FOOD(Tags.FOOD_ITEM.toString(),"Где поесть"),
     HOTELS(Tags.HOTELS_ITEM.toString(), "Гостиницы"),
+    FEATURES_OF_LIFE_EXTENDED_ACCESS("Кнопка для особенностей жизни тут", "Особенности жизни и быта"),
+    FLATS_FOR_RENT_EXTENDED_ACCESS("Кнопка для агенств недвижимости", "Аренда жилья долгосрочная"),
+    FOOD_PRICES_EXTENDED_ACCESS("Кнопка цены на продукты", "Цены на базовые продукты"),
+
 
     //Attractions menu
     ATTRACTIONS_MENU_TEXT(null, "Выберите локацию:"),

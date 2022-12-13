@@ -1,5 +1,6 @@
 package com.telegramBots.GuideToBukharaBot.model;
 
+import com.telegramBots.GuideToBukharaBot.entity.ArticleData;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 

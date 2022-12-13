@@ -1,4 +1,4 @@
-package com.telegramBots.GuideToBukharaBot.model;
+package com.telegramBots.GuideToBukharaBot.entity;
 
 import lombok.Getter;
 import lombok.Setter;

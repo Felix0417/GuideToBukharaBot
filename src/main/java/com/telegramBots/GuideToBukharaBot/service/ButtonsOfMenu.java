@@ -1,5 +1,7 @@
 package com.telegramBots.GuideToBukharaBot.service;
 
+import com.telegramBots.GuideToBukharaBot.entity.ArticleData;
+import com.telegramBots.GuideToBukharaBot.entity.User;
 import com.telegramBots.GuideToBukharaBot.model.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,17 +29,17 @@ public class ButtonsOfMenu{
     TelegramBot bot;
 
     public void drawingTitleMenu(){
-        List<BotCommand> listOfCommands = new ArrayList<>();
-        listOfCommands.add(new BotCommand(MenuButtonTags.START.getCommand(), MenuButtonTags.START.getDescription()));
-        listOfCommands.add(new BotCommand(MenuButtonTags.USER_DATA.getCommand(), MenuButtonTags.USER_DATA.getDescription()));
-        listOfCommands.add(new BotCommand(MenuButtonTags.HELP.getCommand(), MenuButtonTags.HELP.getDescription()));
-        listOfCommands.add(new BotCommand(MenuButtonTags.ABOUT_BOT.getCommand(), MenuButtonTags.ABOUT_BOT.getDescription()));
-        listOfCommands.add(new BotCommand(MenuButtonTags.SETTINGS.getCommand(), MenuButtonTags.SETTINGS.getDescription()));
-        try {
-            bot.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), "ru"));
-        } catch (TelegramApiException e) {
-            log.error("Error setting's bot command list: " + e.getMessage());
-        }
+//        List<BotCommand> listOfCommands = new ArrayList<>();
+//        listOfCommands.add(new BotCommand(MenuButtonTags.START.getCommand(), MenuButtonTags.START.getDescription()));
+//        listOfCommands.add(new BotCommand(MenuButtonTags.USER_DATA.getCommand(), MenuButtonTags.USER_DATA.getDescription()));
+//        listOfCommands.add(new BotCommand(MenuButtonTags.HELP.getCommand(), MenuButtonTags.HELP.getDescription()));
+//        listOfCommands.add(new BotCommand(MenuButtonTags.ABOUT_BOT.getCommand(), MenuButtonTags.ABOUT_BOT.getDescription()));
+//        listOfCommands.add(new BotCommand(MenuButtonTags.SETTINGS.getCommand(), MenuButtonTags.SETTINGS.getDescription()));
+//        try {
+//            bot.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), "ru"));
+//        } catch (TelegramApiException e) {
+//            log.error("Error setting's bot command list: " + e.getMessage());
+//        }
     }
 
     protected void startCommand(Update update) {
@@ -97,11 +99,23 @@ public class ButtonsOfMenu{
     }
 
     private void startMainMenu(long chatId) {
-        drawingButtons(chatId, List.of(
-                MenuButtonTags.MAIN_MENU_TEXT,
-                MenuButtonTags.ATTRACTIONS,
-                MenuButtonTags.FOOD,
-                MenuButtonTags.HOTELS));
+        List<MenuButtonTags> mainMenuTags = new ArrayList<>(){};
+        if (bot.getUserRepository().findById(chatId).get().getStatus().equals(Tags.TOURIST_CHOICE.getDescription())){
+            mainMenuTags.addAll(List.of(
+                    MenuButtonTags.MAIN_MENU_TEXT,
+                    MenuButtonTags.ATTRACTIONS,
+                    MenuButtonTags.FOOD,
+                    MenuButtonTags.HOTELS));
+        }else if (bot.getUserRepository().findById(chatId).get().getStatus().equals(Tags.LOCAL_CHOICE.getDescription())) {
+            mainMenuTags.addAll(List.of(
+                    MenuButtonTags.MAIN_MENU_TEXT,
+                    MenuButtonTags.FOOD,
+                    MenuButtonTags.FLATS_FOR_RENT_EXTENDED_ACCESS,
+                    MenuButtonTags.FEATURES_OF_LIFE_EXTENDED_ACCESS,
+                    MenuButtonTags.FOOD_PRICES_EXTENDED_ACCESS
+                    ));
+        }
+        drawingButtons(chatId, mainMenuTags);
     }
 
     protected void attractionSectionMenu(long chatId){

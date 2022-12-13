@@ -90,10 +90,10 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
                     default:
                         if (messageText.contains("/addArticle") && chatId == config.getOwner()) {
                             buttons.addDataToArticleRepository(chatId, update.getMessage().getText());
-                        }else {
-                            buttons.wrongRequestFromUser(chatId);
                         }
                 }
+            }else {
+                buttons.wrongRequestFromUser(chatId);
             }
         } else if (update.hasCallbackQuery()) {
             messageText = update.getCallbackQuery().getData();
