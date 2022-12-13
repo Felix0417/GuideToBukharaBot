@@ -1,31 +1,27 @@
 package com.telegramBots.GuideToBukharaBot.service;
 
 import com.telegramBots.GuideToBukharaBot.config.BotConfig;
-import com.telegramBots.GuideToBukharaBot.model.*;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import com.telegramBots.GuideToBukharaBot.model.ArticleDataRepository;
+import com.telegramBots.GuideToBukharaBot.model.MenuButtonTags;
+import com.telegramBots.GuideToBukharaBot.model.Tags;
+import com.telegramBots.GuideToBukharaBot.model.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.LongPollingBot;
 
-import java.util.*;
+import javax.annotation.PostConstruct;
+import java.util.Arrays;
+import java.util.Objects;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class TelegramBot extends TelegramLongPollingBot implements LongPollingBot {
 
-    @NonNull
-    @Getter
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @NonNull
-    @Getter
-    private ArticleDataRepository articleDataRepository;
+    private final ArticleDataRepository articleDataRepository;
 
     private ButtonsOfMenu buttons;
 
@@ -34,10 +30,15 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
     MenuButtonTags menuButtonTags;
     Tags tags;
 
-    public TelegramBot(BotConfig config) {
+    public TelegramBot(BotConfig config, UserRepository userRepository, ArticleDataRepository articleDataRepository) {
         this.config = config;
-        buttons = new ButtonsOfMenu(this);
+        this.userRepository = userRepository;
+        this.articleDataRepository = articleDataRepository;
+    }
 
+    @PostConstruct
+    private void init() {
+        buttons = new ButtonsOfMenu(this);
         buttons.drawingTitleMenu();
     }
 
@@ -66,8 +67,8 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
                     .filter(Objects::nonNull).anyMatch(x -> x.equals(messageText))) {
 
                 menuButtonTags = Arrays.stream(MenuButtonTags.values())
-                        .filter(x->x.getCommand() != null)
-                        .filter(x->x.getCommand().equals(messageText))
+                        .filter(x -> x.getCommand() != null)
+                        .filter(x -> x.getCommand().equals(messageText))
                         .findFirst()
                         .get();
 
@@ -92,18 +93,18 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
                             buttons.addDataToArticleRepository(chatId, update.getMessage().getText());
                         }
                 }
-            }else {
+            } else {
                 buttons.wrongRequestFromUser(chatId);
             }
         } else if (update.hasCallbackQuery()) {
             messageText = update.getCallbackQuery().getData();
             chatId = update.getCallbackQuery().getFrom().getId();
-            if (Arrays.stream(Tags.values()).map(Tags::toString).anyMatch(x -> x.equalsIgnoreCase(messageText))){
+            if (Arrays.stream(Tags.values()).map(Tags::toString).anyMatch(x -> x.equalsIgnoreCase(messageText))) {
                 tags = Tags.valueOf(messageText);
-                switch (tags){
+                switch (tags) {
                     case TOURIST_CHOICE:
                     case LOCAL_CHOICE:
-                        buttons.registerUserStatus(tags.getDescription(),chatId);
+                        buttons.registerUserStatus(tags.getDescription(), chatId);
                         break;
                     case ATTRACTIONS_ITEM:
                         buttons.attractionSectionMenu(chatId);
