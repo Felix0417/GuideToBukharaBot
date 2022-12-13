@@ -1,7 +1,6 @@
 package com.telegramBots.GuideToBukharaBot.service;
 
 import com.telegramBots.GuideToBukharaBot.model.MenuButtonTags;
-import io.vavr.control.Try;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -33,9 +32,10 @@ public class LoadLeftMenu {
         listOfCommands.add(new BotCommand(MenuButtonTags.ABOUT_BOT.getCommand(), MenuButtonTags.ABOUT_BOT.getDescription()));
         listOfCommands.add(new BotCommand(MenuButtonTags.SETTINGS.getCommand(), MenuButtonTags.SETTINGS.getDescription()));
 
-        //немножко облагородим код, избавив его от старых обработок эксепшенов. в идеале эксепшенов быть не должно
-        Try.of(() -> bot.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), "ru")))
-                .onFailure(e -> log.error("Error setting's bot command list: " + e.getMessage()))
-                .get();
+        try {
+            bot.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), "ru"));
+        } catch (Exception e) {
+            log.error("Error setting's bot command list: " + e.getMessage());
+        }
     }
 }
