@@ -4,8 +4,8 @@ import com.telegramBots.GuideToBukharaBot.config.BotConfig;
 import com.telegramBots.GuideToBukharaBot.model.ArticleDataRepository;
 import com.telegramBots.GuideToBukharaBot.model.MenuButtonTags;
 import com.telegramBots.GuideToBukharaBot.model.Tags;
-import com.telegramBots.GuideToBukharaBot.model.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -19,26 +19,23 @@ import java.util.Objects;
 @Component
 public class TelegramBot extends TelegramLongPollingBot implements LongPollingBot {
 
-    private final UserRepository userRepository;
-
     private final ArticleDataRepository articleDataRepository;
 
-    private ButtonsOfMenu buttons;
+    private final ButtonsOfMenu buttons;
 
     private final BotConfig config;
 
     MenuButtonTags menuButtonTags;
     Tags tags;
 
-    public TelegramBot(BotConfig config, UserRepository userRepository, ArticleDataRepository articleDataRepository) {
+    public TelegramBot(BotConfig config, ArticleDataRepository articleDataRepository, @Lazy ButtonsOfMenu buttons) {
         this.config = config;
-        this.userRepository = userRepository;
+        this.buttons = buttons;
         this.articleDataRepository = articleDataRepository;
     }
 
     @PostConstruct
     private void init() {
-        buttons = new ButtonsOfMenu(this);
         buttons.drawingTitleMenu();
     }
 
@@ -56,7 +53,6 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
     public void onUpdateReceived(Update update) {
         long chatId;
         String messageText;
-        buttons = new ButtonsOfMenu(this);
 
         if (update.hasMessage() && update.getMessage().hasText()) {
             chatId = update.getMessage().getChatId();
