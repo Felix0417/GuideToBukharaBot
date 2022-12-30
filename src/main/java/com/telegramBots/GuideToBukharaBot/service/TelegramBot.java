@@ -37,8 +37,6 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
     public TelegramBot(BotConfig config) {
         this.config = config;
         buttons = new ButtonsOfMenu(this);
-
-        buttons.drawingTitleMenu();
     }
 
     @Override
@@ -87,10 +85,6 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
                     case SETTINGS:
                         buttons.changeUserStatus(update);
                         break;
-                    default:
-                        if (messageText.contains("/addArticle") && chatId == config.getOwner()) {
-                            buttons.addDataToArticleRepository(chatId, update.getMessage().getText());
-                        }
                 }
             }else {
                 buttons.wrongRequestFromUser(chatId);
@@ -100,10 +94,11 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
             chatId = update.getCallbackQuery().getFrom().getId();
             if (Arrays.stream(Tags.values()).map(Tags::toString).anyMatch(x -> x.equalsIgnoreCase(messageText))){
                 tags = Tags.valueOf(messageText);
-                switch (tags){
+                switch (tags) {
                     case TOURIST_CHOICE:
                     case LOCAL_CHOICE:
-                        buttons.registerUserStatus(tags.getDescription(),chatId);
+                        buttons.editMessage(chatId, update.getCallbackQuery().getMessage().getMessageId());
+                        buttons.registerUserStatus(tags.getDescription(), chatId);
                         break;
                     case ATTRACTIONS_ITEM:
                         buttons.attractionSectionMenu(chatId);
@@ -116,7 +111,13 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
                         break;
                     default:
                         buttons.sendMessage(chatId, articleDataRepository.getArticleDataById(tags.getDescription()).getData());
+                        String url = articleDataRepository.getArticleDataByAddress(tags.getDescription()).getAddress();
+                        if (url != null) {
+                            buttons.drawingUrlButton(chatId, url);
+                        }
                 }
+            }else if (MenuButtonTags.URL_BACK_TO_MAIN_MENU.getCommand().equals(messageText)){
+                buttons.startMainMenu(chatId);
             }
         }
     }

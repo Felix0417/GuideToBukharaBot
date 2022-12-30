@@ -2,6 +2,7 @@ package com.telegramBots.GuideToBukharaBot.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,6 +20,11 @@ public class ArticleData {
     String id;
 
     @Column(name = "article_data")
+    @Type(type = "text")
     String data;
+
+    @Column(name = "article_address")
+    @Type(type = "text")
+    String address;
 
 }

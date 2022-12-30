@@ -48,7 +48,12 @@ public enum MenuButtonTags {
     //Hotels section menu
     HOTELS_MENU_TEXT(null, "Выберите тип отеля:"),
     HOTEL( Tags.HOTELS.toString(), "Гостиница / Отель"),
-    GUEST_HOUSE(Tags.GUEST_HOUSES.toString(), "Гостевые дома");
+    GUEST_HOUSE(Tags.GUEST_HOUSES.toString(), "Гостевые дома"),
+
+    // Url button
+    URL_TEXT(null, "Вы можете узнать больше информации об этом, или перейти в главное меню"),
+    URL_GET_BUTTON(null, "Узнать подробнее"),
+    URL_BACK_TO_MAIN_MENU(START.command, "Вернуться в главное меню");
 
     private final String command;
     private final String description;

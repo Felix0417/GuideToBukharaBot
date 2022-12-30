@@ -1,16 +1,13 @@
 package com.telegramBots.GuideToBukharaBot.service;
 
-import com.telegramBots.GuideToBukharaBot.entity.ArticleData;
 import com.telegramBots.GuideToBukharaBot.entity.User;
 import com.telegramBots.GuideToBukharaBot.model.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
-import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -27,20 +24,6 @@ import java.util.Optional;
 public class ButtonsOfMenu{
 
     TelegramBot bot;
-
-    public void drawingTitleMenu(){
-//        List<BotCommand> listOfCommands = new ArrayList<>();
-//        listOfCommands.add(new BotCommand(MenuButtonTags.START.getCommand(), MenuButtonTags.START.getDescription()));
-//        listOfCommands.add(new BotCommand(MenuButtonTags.USER_DATA.getCommand(), MenuButtonTags.USER_DATA.getDescription()));
-//        listOfCommands.add(new BotCommand(MenuButtonTags.HELP.getCommand(), MenuButtonTags.HELP.getDescription()));
-//        listOfCommands.add(new BotCommand(MenuButtonTags.ABOUT_BOT.getCommand(), MenuButtonTags.ABOUT_BOT.getDescription()));
-//        listOfCommands.add(new BotCommand(MenuButtonTags.SETTINGS.getCommand(), MenuButtonTags.SETTINGS.getDescription()));
-//        try {
-//            bot.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), "ru"));
-//        } catch (TelegramApiException e) {
-//            log.error("Error setting's bot command list: " + e.getMessage());
-//        }
-    }
 
     protected void startCommand(Update update) {
         var chatId = update.getMessage().getChatId();
@@ -94,11 +77,10 @@ public class ButtonsOfMenu{
         user.setStatus(data);
         bot.getUserRepository().save(user);
         log.info("User has update settings: " + user);
-        sendMessage(chatId, MenuButtonTags.STATUS_HAS_CHANGED.getDescription());
         startMainMenu(chatId);
     }
 
-    private void startMainMenu(long chatId) {
+    protected void startMainMenu(long chatId) {
         List<MenuButtonTags> mainMenuTags = new ArrayList<>(){};
         if (bot.getUserRepository().findById(chatId).get().getStatus().equals(Tags.TOURIST_CHOICE.getDescription())){
             mainMenuTags.addAll(List.of(
@@ -165,19 +147,43 @@ public class ButtonsOfMenu{
         executeMessage(message);
     }
 
+    protected void drawingUrlButton(long chatId, String url){
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(MenuButtonTags.URL_TEXT.getDescription());
+
+        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+        InlineKeyboardButton urlButton = new InlineKeyboardButton();
+        urlButton.setText(MenuButtonTags.URL_GET_BUTTON.getDescription());
+        urlButton.setUrl(url);
+
+        InlineKeyboardButton mainMenu = new InlineKeyboardButton();
+        mainMenu.setText(MenuButtonTags.URL_BACK_TO_MAIN_MENU.getDescription());
+        mainMenu.setCallbackData(MenuButtonTags.URL_BACK_TO_MAIN_MENU.getCommand());
+        buttons.add(List.of(urlButton, mainMenu));
+
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        markup.setKeyboard(buttons);
+        message.setReplyMarkup(markup);
+        executeMessage(message);
+    }
+
+    protected void editMessage(long chatId, long messageId) {
+        EditMessageText editMessage = new EditMessageText();
+        editMessage.setChatId(String.valueOf(chatId));
+        editMessage.setText(MenuButtonTags.STATUS_HAS_CHANGED.getDescription());
+        editMessage.setMessageId((int) messageId);
+        try {
+            bot.execute(editMessage);
+        }catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     void wrongRequestFromUser(long chatId){
         sendMessage(chatId, MenuButtonTags.WRONG_REQUEST_FROM_USER.getDescription());
     }
 
-    public void addDataToArticleRepository(long chatId, String text){
-        List<String> data = List.of(text.replaceFirst("/addArticle ", "").split("#\n"));
-        ArticleData newArticle = new ArticleData();
-        newArticle.setId(data.get(0));
-        newArticle.setData(data.get(1));
-        bot.getArticleDataRepository().save(newArticle);
-
-        sendMessage(chatId, "Данные успешно добавлены");
-    }
 
     private void executeMessage(SendMessage message) {
         try {

@@ -38,7 +38,6 @@ public class LoadLeftMenu {
 //        Try.of(() -> bot.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), "ru")))
 //                .onFailure(e -> log.error("Error setting's bot command list: " + e.getMessage()))
 //                .get();
-
         try {
             bot.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), "ru"));
         } catch (TelegramApiException e) {
