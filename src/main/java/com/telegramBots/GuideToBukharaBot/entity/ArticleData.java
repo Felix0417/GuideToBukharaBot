@@ -1,5 +1,6 @@
 package com.telegramBots.GuideToBukharaBot.entity;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
@@ -11,8 +12,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "local.data.bukhara")
-@Getter
-@Setter
+@Data
 public class ArticleData {
 
     @Id

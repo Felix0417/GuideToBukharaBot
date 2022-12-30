@@ -3,6 +3,7 @@ package com.telegramBots.GuideToBukharaBot.service;
 import com.telegramBots.GuideToBukharaBot.entity.User;
 import com.telegramBots.GuideToBukharaBot.model.*;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -20,15 +21,16 @@ import java.util.Optional;
 
 @Slf4j
 @Component
-@AllArgsConstructor
-public class ButtonsOfMenu{
+@RequiredArgsConstructor
+public class ButtonsOfMenu {
 
-    TelegramBot bot;
+    private final UserRepository userRepository;
+    private final ArticleDataRepository articleDataRepository;
 
     protected void startCommand(Update update) {
         var chatId = update.getMessage().getChatId();
         var chat = update.getMessage().getChat();
-        if (bot.getUserRepository().findById(chatId).isEmpty()) {
+        if (userRepository.findById(chatId).isEmpty()) {
             User user = new User();
             user.setChatId(chatId);
             user.setFirstName(chat.getFirstName());
@@ -36,7 +38,7 @@ public class ButtonsOfMenu{
             user.setUserName(chat.getUserName());
             user.setRegisteredAt(new Timestamp(System.currentTimeMillis()));
 
-            bot.getUserRepository().save(user);
+            userRepository.save(user);
             log.info("User saved: " + user);
             changeUserStatus(update);
         }
@@ -47,21 +49,21 @@ public class ButtonsOfMenu{
     }
 
     protected void userDataCommand(long chatId){
-        Optional<User> user = bot.getUserRepository().findById(chatId);
+        Optional<User> user = userRepository.findById(chatId);
         String regDate = new SimpleDateFormat("d.MM.yyyy hh:mm").format(user.get().getRegisteredAt());
         sendMessage(chatId, String.format(
-                bot.getArticleDataRepository().getArticleDataById(Tags.USER_DATA.getDescription()).getData(),
+                articleDataRepository.getArticleDataById(Tags.USER_DATA.getDescription()).getData(),
                 user.get().getChatId(),
                 user.get().getUserName(),
                 regDate));
     }
 
     protected void helpCommand(long chatId){
-        sendMessage(chatId, bot.getArticleDataRepository().getArticleDataById(Tags.HELP.getDescription()).getData());
+        sendMessage(chatId, articleDataRepository.getArticleDataById(Tags.HELP.getDescription()).getData());
     }
 
     protected void aboutBotCommand(long chatId){
-        sendMessage(chatId, bot.getArticleDataRepository().getArticleDataById(Tags.ABOUT_BOT.getDescription()).getData());
+        sendMessage(chatId, articleDataRepository.getArticleDataById(Tags.ABOUT_BOT.getDescription()).getData());
     }
 
     protected void changeUserStatus(Update update) {
@@ -73,22 +75,22 @@ public class ButtonsOfMenu{
     }
 
     protected void registerUserStatus(String data, long chatId) {
-        User user = bot.getUserRepository().findById(chatId).get();
+        User user = userRepository.findById(chatId).get();
         user.setStatus(data);
-        bot.getUserRepository().save(user);
+        userRepository.save(user);
         log.info("User has update settings: " + user);
         startMainMenu(chatId);
     }
 
     protected void startMainMenu(long chatId) {
         List<MenuButtonTags> mainMenuTags = new ArrayList<>(){};
-        if (bot.getUserRepository().findById(chatId).get().getStatus().equals(Tags.TOURIST_CHOICE.getDescription())){
+        if (userRepository.findById(chatId).get().getStatus().equals(Tags.TOURIST_CHOICE.getDescription())){
             mainMenuTags.addAll(List.of(
                     MenuButtonTags.MAIN_MENU_TEXT,
                     MenuButtonTags.ATTRACTIONS,
                     MenuButtonTags.FOOD,
                     MenuButtonTags.HOTELS));
-        }else if (bot.getUserRepository().findById(chatId).get().getStatus().equals(Tags.LOCAL_CHOICE.getDescription())) {
+        }else if (userRepository.findById(chatId).get().getStatus().equals(Tags.LOCAL_CHOICE.getDescription())) {
             mainMenuTags.addAll(List.of(
                     MenuButtonTags.MAIN_MENU_TEXT,
                     MenuButtonTags.FOOD,
@@ -168,36 +170,11 @@ public class ButtonsOfMenu{
         executeMessage(message);
     }
 
-    protected void editMessage(long chatId, long messageId) {
+    protected EditMessageText editMessage(long chatId, long messageId) {
         EditMessageText editMessage = new EditMessageText();
         editMessage.setChatId(String.valueOf(chatId));
         editMessage.setText(MenuButtonTags.STATUS_HAS_CHANGED.getDescription());
         editMessage.setMessageId((int) messageId);
-        try {
-            bot.execute(editMessage);
-        }catch (TelegramApiException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    void wrongRequestFromUser(long chatId){
-        sendMessage(chatId, MenuButtonTags.WRONG_REQUEST_FROM_USER.getDescription());
-    }
-
-
-    private void executeMessage(SendMessage message) {
-        try {
-            bot.execute(message);
-        } catch (TelegramApiException e) {
-            log.error(" Error occurred " + e.getMessage());
-        }
-    }
-
-    protected void sendMessage(long chatId, String textToSend) {
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText(textToSend);
-
-        executeMessage(message);
+        return editMessage;
     }
 }
