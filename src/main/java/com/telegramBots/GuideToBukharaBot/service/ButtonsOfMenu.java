@@ -18,11 +18,24 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ButtonsOfMenu {
 
+    private static final List<MenuButtonTags> TOURIST_CHOICE_LIST = List.of(
+            MenuButtonTags.MAIN_MENU_TEXT,
+            MenuButtonTags.ATTRACTIONS,
+            MenuButtonTags.FOOD,
+            MenuButtonTags.HOTELS);
+
+    private static final List<MenuButtonTags> LOCAL_CHOICE_LIST = List.of(
+            MenuButtonTags.MAIN_MENU_TEXT,
+            MenuButtonTags.FOOD,
+            MenuButtonTags.FLATS_FOR_RENT_EXTENDED_ACCESS,
+            MenuButtonTags.FEATURES_OF_LIFE_EXTENDED_ACCESS,
+            MenuButtonTags.FOOD_PRICES_EXTENDED_ACCESS
+    );
+
     private final UserRepository userRepository;
     private final ArticleDataRepository articleDataRepository;
 
     protected String startCommand(Update update) {
-        var chatId = update.getMessage().getChatId();
         var chat = update.getMessage().getChat();
         String answer = String.format(MenuButtonTags.GREETINGS_TEXT.getDescription(), chat.getUserName());
         log.info("Replied to user " + chat.getUserName());
@@ -67,23 +80,13 @@ public class ButtonsOfMenu {
     }
 
     protected List<MenuButtonTags> startMainMenu(long chatId) {
-        List<MenuButtonTags> mainMenuTags = new ArrayList<>(){};
         if (userRepository.findById(chatId).get().getStatus().equals(Tags.TOURIST_CHOICE.getDescription())){
-            mainMenuTags.addAll(List.of(
-                    MenuButtonTags.MAIN_MENU_TEXT,
-                    MenuButtonTags.ATTRACTIONS,
-                    MenuButtonTags.FOOD,
-                    MenuButtonTags.HOTELS));
-        }else if (userRepository.findById(chatId).get().getStatus().equals(Tags.LOCAL_CHOICE.getDescription())) {
-            mainMenuTags.addAll(List.of(
-                    MenuButtonTags.MAIN_MENU_TEXT,
-                    MenuButtonTags.FOOD,
-                    MenuButtonTags.FLATS_FOR_RENT_EXTENDED_ACCESS,
-                    MenuButtonTags.FEATURES_OF_LIFE_EXTENDED_ACCESS,
-                    MenuButtonTags.FOOD_PRICES_EXTENDED_ACCESS
-                    ));
+            return TOURIST_CHOICE_LIST;
+        } else if (userRepository.findById(chatId).get().getStatus().equals(Tags.LOCAL_CHOICE.getDescription())) {
+            return LOCAL_CHOICE_LIST;
+        } else {
+            return List.of();
         }
-        return mainMenuTags;
     }
 
     protected List<MenuButtonTags> attractionSectionMenu(){

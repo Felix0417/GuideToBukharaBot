@@ -7,6 +7,7 @@ import com.telegramBots.GuideToBukharaBot.model.Tags;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import one.util.streamex.StreamEx;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
@@ -58,56 +59,59 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
         executeMessage(message);
     }
 
-    void wrongRequestFromUser(long chatId){
+    void wrongRequestFromUser(long chatId) {
         sendMessage(chatId, MenuButtonTags.WRONG_REQUEST_FROM_USER.getDescription());
     }
 
     @SneakyThrows
     @PostConstruct
-    private void initLeftMenu(){
+    private void initLeftMenu() {
         execute(new SetMyCommands(leftMenu.getListOfCommands(), new BotCommandScopeDefault(), "ru"));
     }
 
-    protected void drawingButtons(long chatId, List<MenuButtonTags> tags){
-        SendMessage message = new SendMessage();
+    protected void drawingButtons(long chatId, List<MenuButtonTags> tags) {
+        var buttons = StreamEx.of(tags)
+                .map(this::getButtonList)
+                .toList();
+
+        var message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText(tags.get(0).getDescription());
 
-        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-        for (int i = 1; i < tags.size(); i++) {
-            InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
-            inlineKeyboardButton.setText(tags.get(i).getDescription());
-            inlineKeyboardButton.setCallbackData(tags.get(i).getCommand());
-
-            buttons.add(List.of(inlineKeyboardButton));
-        }
-
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        var inlineKeyboardMarkup = new InlineKeyboardMarkup();
         inlineKeyboardMarkup.setKeyboard(buttons);
-
         message.setReplyMarkup(inlineKeyboardMarkup);
+
         executeMessage(message);
     }
 
-    protected void drawingUrlButton(long chatId, String url){
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText(MenuButtonTags.URL_TEXT.getDescription());
-
-        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-        InlineKeyboardButton urlButton = new InlineKeyboardButton();
+    protected void drawingUrlButton(long chatId, String url) {
+        var urlButton = new InlineKeyboardButton();
         urlButton.setText(MenuButtonTags.URL_GET_BUTTON.getDescription());
         urlButton.setUrl(url);
 
-        InlineKeyboardButton mainMenu = new InlineKeyboardButton();
+        var mainMenu = new InlineKeyboardButton();
         mainMenu.setText(MenuButtonTags.URL_BACK_TO_MAIN_MENU.getDescription());
         mainMenu.setCallbackData(MenuButtonTags.URL_BACK_TO_MAIN_MENU.getCommand());
+        var buttons = new ArrayList<List<InlineKeyboardButton>>();
         buttons.add(List.of(urlButton, mainMenu));
 
-        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        var markup = new InlineKeyboardMarkup();
         markup.setKeyboard(buttons);
+
+        var message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(MenuButtonTags.URL_TEXT.getDescription());
         message.setReplyMarkup(markup);
+
         executeMessage(message);
+    }
+
+    private List<InlineKeyboardButton> getButtonList(MenuButtonTags tag) {
+        var inlineKeyboardButton = new InlineKeyboardButton();
+        inlineKeyboardButton.setCallbackData(tag.getCommand());
+        inlineKeyboardButton.setText(tag.getDescription());
+        return List.of(inlineKeyboardButton);
     }
 
     @Override
@@ -120,14 +124,20 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
             chatId = update.getMessage().getChatId();
             messageText = update.getMessage().getText();
 
-            if (Arrays.stream(MenuButtonTags.values()).map(MenuButtonTags::getCommand).filter(Objects::nonNull).anyMatch(x -> x.equals(messageText))) {
+            if (Arrays.stream(MenuButtonTags.values())
+                    .map(MenuButtonTags::getCommand)
+                    .filter(Objects::nonNull)
+                    .anyMatch(x -> x.equals(messageText))) {
 
-                menuButtonTags = Arrays.stream(MenuButtonTags.values()).filter(x -> x.getCommand() != null).filter(x -> x.getCommand().equals(messageText)).findFirst().get();
+                menuButtonTags = Arrays.stream(MenuButtonTags.values()).filter(x -> x.getCommand() != null)
+                        .filter(x -> x.getCommand().equals(messageText))
+                        .findFirst()
+                        .get();
 
                 switch (menuButtonTags) {
                     case START:
                         sendMessage(chatId, buttons.startCommand(update));
-                        if (!buttons.containsUserInRepository(chatId)){
+                        if (!buttons.containsUserInRepository(chatId)) {
                             userRegistrationService.register(update);
                             drawingButtons(chatId, buttons.changeUserStatus());
                             break;
