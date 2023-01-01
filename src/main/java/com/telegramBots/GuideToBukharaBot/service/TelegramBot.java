@@ -71,6 +71,7 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
 
     protected void drawingButtons(long chatId, List<MenuButtonTags> tags) {
         var buttons = StreamEx.of(tags)
+                .skip(1L)
                 .map(this::getButtonList)
                 .toList();
 
