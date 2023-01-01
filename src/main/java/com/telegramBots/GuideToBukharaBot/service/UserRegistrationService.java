@@ -17,7 +17,7 @@ public class UserRegistrationService {
 
     private final UserRepository userRepository;
 
-    protected void register(Update update) {
+    public void register(Update update) {
         var chatId = update.getMessage().getChatId();
         var chat = update.getMessage().getChat();
         val user = User.builder()

@@ -42,11 +42,11 @@ public class ButtonsOfMenu {
         return answer;
     }
 
-    protected boolean containsUserInRepository(long chatId){
+    public boolean containsUserInRepository(long chatId){
         return userRepository.findById(chatId).isPresent();
     }
 
-    protected String userDataCommand(long chatId){
+    public String userDataCommand(long chatId){
         Optional<User> user = userRepository.findById(chatId);
         String regDate = new SimpleDateFormat("d.MM.yyyy hh:mm").format(user.get().getRegisteredAt());
         return String.format(
@@ -56,15 +56,15 @@ public class ButtonsOfMenu {
                 regDate);
     }
 
-    protected String helpCommand(){
+    public String helpCommand(){
         return articleDataRepository.getArticleDataById(Tags.HELP.getDescription()).getData();
     }
 
-    protected String aboutBotCommand(){
+    public String aboutBotCommand(){
         return articleDataRepository.getArticleDataById(Tags.ABOUT_BOT.getDescription()).getData();
     }
 
-    protected List<MenuButtonTags> changeUserStatus() {
+    public List<MenuButtonTags> changeUserStatus() {
         return List.of(
                 MenuButtonTags.STATUS_TEXT,
                 MenuButtonTags.STATUS_TOURIST,
@@ -79,7 +79,7 @@ public class ButtonsOfMenu {
         startMainMenu(chatId);
     }
 
-    protected List<MenuButtonTags> startMainMenu(long chatId) {
+    public List<MenuButtonTags> startMainMenu(long chatId) {
         if (userRepository.findById(chatId).get().getStatus().equals(Tags.TOURIST_CHOICE.getDescription())){
             return TOURIST_CHOICE_LIST;
         } else if (userRepository.findById(chatId).get().getStatus().equals(Tags.LOCAL_CHOICE.getDescription())) {

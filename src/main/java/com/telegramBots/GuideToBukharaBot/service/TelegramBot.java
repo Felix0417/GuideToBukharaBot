@@ -4,6 +4,7 @@ import com.telegramBots.GuideToBukharaBot.config.BotConfig;
 import com.telegramBots.GuideToBukharaBot.model.ArticleDataRepository;
 import com.telegramBots.GuideToBukharaBot.model.MenuButtonTags;
 import com.telegramBots.GuideToBukharaBot.model.Tags;
+import com.telegramBots.GuideToBukharaBot.service.strategies.ButtonStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +20,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.generics.LongPollingBot;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -33,6 +31,7 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
     private final BotConfig config;
     private final UserRegistrationService userRegistrationService;
     private final LoadLeftMenu leftMenu;
+    private final Map<MenuButtonTags, ButtonStrategy> strategyMap;
     private MenuButtonTags menuButtonTags;
     private Tags tags;
 
@@ -51,7 +50,7 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
         execute(message);
     }
 
-    protected void sendMessage(long chatId, String textToSend) {
+    public void sendMessage(long chatId, String textToSend) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText(textToSend);
@@ -154,18 +153,10 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
                         }
                         drawingButtons(chatId, buttons.startMainMenu(chatId));
                         break;
-                    case USER_DATA:
-                        sendMessage(chatId, buttons.userDataCommand(chatId));
-                        break;
-                    case HELP:
-                        sendMessage(chatId, buttons.helpCommand());
-                        break;
-                    case ABOUT_BOT:
-                        sendMessage(chatId, buttons.aboutBotCommand());
-                        break;
-                    case SETTINGS:
-                        drawingButtons(chatId, buttons.changeUserStatus());
-                        break;
+                    default:
+                        var message = strategyMap.get(menuButtonTags)
+                                .apply(chatId);
+                        executeMessage(message);
                 }
             } else {
                 wrongRequestFromUser(chatId);
