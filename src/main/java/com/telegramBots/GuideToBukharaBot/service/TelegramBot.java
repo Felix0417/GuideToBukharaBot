@@ -75,37 +75,46 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
                 .map(this::getButtonList)
                 .toList();
 
-        var message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText(tags.get(0).getDescription());
-
-        var inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        inlineKeyboardMarkup.setKeyboard(buttons);
-        message.setReplyMarkup(inlineKeyboardMarkup);
+        var message = messageForDrawingButtons(chatId, tags.get(0));
+        message.setReplyMarkup(getNewInLineKeyboardMarkup(buttons));
 
         executeMessage(message);
     }
 
     protected void drawingUrlButton(long chatId, String url) {
-        var urlButton = new InlineKeyboardButton();
-        urlButton.setText(MenuButtonTags.URL_GET_BUTTON.getDescription());
-        urlButton.setUrl(url);
-
-        var mainMenu = new InlineKeyboardButton();
-        mainMenu.setText(MenuButtonTags.URL_BACK_TO_MAIN_MENU.getDescription());
-        mainMenu.setCallbackData(MenuButtonTags.URL_BACK_TO_MAIN_MENU.getCommand());
         var buttons = new ArrayList<List<InlineKeyboardButton>>();
-        buttons.add(List.of(urlButton, mainMenu));
+        buttons.add(List.of(
+                getInlineKeyboardButton(MenuButtonTags.URL_GET_BUTTON, url),
+                getInlineKeyboardButton(MenuButtonTags.URL_BACK_TO_MAIN_MENU, null)));
 
-        var markup = new InlineKeyboardMarkup();
-        markup.setKeyboard(buttons);
-
-        var message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText(MenuButtonTags.URL_TEXT.getDescription());
-        message.setReplyMarkup(markup);
+        var message = messageForDrawingButtons(chatId, MenuButtonTags.URL_TEXT);
+        message.setReplyMarkup(getNewInLineKeyboardMarkup(buttons));
 
         executeMessage(message);
+    }
+
+    protected SendMessage messageForDrawingButtons(long chatId, MenuButtonTags tagFirst) {
+        var message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(tagFirst.getDescription());
+        return message;
+    }
+
+    protected InlineKeyboardMarkup getNewInLineKeyboardMarkup(List<List<InlineKeyboardButton>> buttons) {
+        var inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        inlineKeyboardMarkup.setKeyboard(buttons);
+        return inlineKeyboardMarkup;
+    }
+
+    protected InlineKeyboardButton getInlineKeyboardButton(MenuButtonTags tag, String text) {
+        var inlineKeyboardButton = new InlineKeyboardButton();
+        inlineKeyboardButton.setText(tag.getDescription());
+        if (null != text) {
+            inlineKeyboardButton.setUrl(text);
+        } else {
+            inlineKeyboardButton.setCallbackData(tag.getCommand());
+        }
+        return inlineKeyboardButton;
     }
 
     private List<InlineKeyboardButton> getButtonList(MenuButtonTags tag) {
