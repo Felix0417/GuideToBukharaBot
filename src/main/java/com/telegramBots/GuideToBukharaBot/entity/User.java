@@ -1,9 +1,6 @@
 package com.telegramBots.GuideToBukharaBot.entity;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +11,9 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "public.user")
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id
@@ -34,5 +34,4 @@ public class User {
 
     @Column(name="registered_at")
     private Timestamp registeredAt;
-
 }

@@ -4,6 +4,7 @@ import com.telegramBots.GuideToBukharaBot.entity.User;
 import com.telegramBots.GuideToBukharaBot.model.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -14,21 +15,20 @@ import java.sql.Timestamp;
 @RequiredArgsConstructor
 public class UserRegistrationService {
 
-    private User newUser;
-
     private final UserRepository userRepository;
 
-    protected void register(Update update){
-        newUser = new User();
+    protected void register(Update update) {
         var chatId = update.getMessage().getChatId();
         var chat = update.getMessage().getChat();
-        newUser.setChatId(chatId);
-        newUser.setFirstName(chat.getFirstName());
-        newUser.setLastName(chat.getLastName());
-        newUser.setUserName(chat.getUserName());
-        newUser.setRegisteredAt(new Timestamp(System.currentTimeMillis()));
+        val user = User.builder()
+                .chatId(chatId)
+                .firstName(chat.getFirstName())
+                .lastName(chat.getLastName())
+                .userName(chat.getUserName())
+                .registeredAt(new Timestamp(System.currentTimeMillis()))
+                .build();
 
-        userRepository.save(newUser);
-        log.info("User saved: " + newUser);
+        userRepository.save(user);
+        log.info("User saved: " + user);
     }
 }
