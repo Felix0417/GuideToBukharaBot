@@ -9,11 +9,18 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.generics.LongPollingBot;
 
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -23,6 +30,8 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
     private final ArticleDataRepository articleDataRepository;
     private final ButtonsOfMenu buttons;
     private final BotConfig config;
+    private final UserRegistrationService userRegistrationService;
+    private final LoadLeftMenu leftMenu;
     private MenuButtonTags menuButtonTags;
     private Tags tags;
 
@@ -53,6 +62,54 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
         sendMessage(chatId, MenuButtonTags.WRONG_REQUEST_FROM_USER.getDescription());
     }
 
+    @SneakyThrows
+    @PostConstruct
+    private void initLeftMenu(){
+        execute(new SetMyCommands(leftMenu.getListOfCommands(), new BotCommandScopeDefault(), "ru"));
+    }
+
+    protected void drawingButtons(long chatId, List<MenuButtonTags> tags){
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(tags.get(0).getDescription());
+
+        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+        for (int i = 1; i < tags.size(); i++) {
+            InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+            inlineKeyboardButton.setText(tags.get(i).getDescription());
+            inlineKeyboardButton.setCallbackData(tags.get(i).getCommand());
+
+            buttons.add(List.of(inlineKeyboardButton));
+        }
+
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        inlineKeyboardMarkup.setKeyboard(buttons);
+
+        message.setReplyMarkup(inlineKeyboardMarkup);
+        executeMessage(message);
+    }
+
+    protected void drawingUrlButton(long chatId, String url){
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(MenuButtonTags.URL_TEXT.getDescription());
+
+        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+        InlineKeyboardButton urlButton = new InlineKeyboardButton();
+        urlButton.setText(MenuButtonTags.URL_GET_BUTTON.getDescription());
+        urlButton.setUrl(url);
+
+        InlineKeyboardButton mainMenu = new InlineKeyboardButton();
+        mainMenu.setText(MenuButtonTags.URL_BACK_TO_MAIN_MENU.getDescription());
+        mainMenu.setCallbackData(MenuButtonTags.URL_BACK_TO_MAIN_MENU.getCommand());
+        buttons.add(List.of(urlButton, mainMenu));
+
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        markup.setKeyboard(buttons);
+        message.setReplyMarkup(markup);
+        executeMessage(message);
+    }
+
     @Override
     @SneakyThrows
     public void onUpdateReceived(Update update) {
@@ -69,23 +126,29 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
 
                 switch (menuButtonTags) {
                     case START:
-                        buttons.startCommand(update);
+                        sendMessage(chatId, buttons.startCommand(update));
+                        if (!buttons.containsUserInRepository(chatId)){
+                            userRegistrationService.register(update);
+                            drawingButtons(chatId, buttons.changeUserStatus());
+                            break;
+                        }
+                        drawingButtons(chatId, buttons.startMainMenu(chatId));
                         break;
                     case USER_DATA:
-                        buttons.userDataCommand(chatId);
+                        sendMessage(chatId, buttons.userDataCommand(chatId));
                         break;
                     case HELP:
-                        buttons.helpCommand(chatId);
+                        sendMessage(chatId, buttons.helpCommand());
                         break;
                     case ABOUT_BOT:
-                        buttons.aboutBotCommand(chatId);
+                        sendMessage(chatId, buttons.aboutBotCommand());
                         break;
                     case SETTINGS:
-                        buttons.changeUserStatus(update);
+                        drawingButtons(chatId, buttons.changeUserStatus());
                         break;
                 }
             } else {
-                buttons.wrongRequestFromUser(chatId);
+                wrongRequestFromUser(chatId);
             }
         } else if (update.hasCallbackQuery()) {
             messageText = update.getCallbackQuery().getData();
@@ -99,19 +162,19 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
                         buttons.registerUserStatus(tags.getDescription(), chatId);
                         break;
                     case ATTRACTIONS_ITEM:
-                        buttons.attractionSectionMenu(chatId);
+                        drawingButtons(chatId, buttons.attractionSectionMenu());
                         break;
                     case FOOD_ITEM:
-                        buttons.foodSectionMenu(chatId);
+                        drawingButtons(chatId, buttons.foodSectionMenu());
                         break;
                     case HOTELS_ITEM:
-                        buttons.hotelsSectionMenu(chatId);
+                        drawingButtons(chatId, buttons.hotelsSectionMenu());
                         break;
                     default:
                         sendMessage(chatId, articleDataRepository.getArticleDataById(tags.getDescription()).getData());
                         String url = articleDataRepository.getArticleDataByAddress(tags.getDescription()).getAddress();
                         if (url != null) {
-                            buttons.drawingUrlButton(chatId, url);
+                            drawingUrlButton(chatId, url);
                         }
                 }
             } else if (MenuButtonTags.URL_BACK_TO_MAIN_MENU.getCommand().equals(messageText)) {
