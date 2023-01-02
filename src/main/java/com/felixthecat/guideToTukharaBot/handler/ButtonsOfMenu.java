@@ -1,7 +1,10 @@
-package com.telegramBots.GuideToBukharaBot.service;
+package com.felixthecat.guideToTukharaBot.handler;
 
-import com.telegramBots.GuideToBukharaBot.entity.User;
-import com.telegramBots.GuideToBukharaBot.model.*;
+import com.felixthecat.guideToTukharaBot.entity.User;
+import com.felixthecat.guideToTukharaBot.model.ArticleDataRepository;
+import com.felixthecat.guideToTukharaBot.model.MenuButtonTags;
+import com.felixthecat.guideToTukharaBot.model.Tags;
+import com.felixthecat.guideToTukharaBot.model.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -41,11 +44,11 @@ public class ButtonsOfMenu {
         return answer;
     }
 
-    public boolean containsUserInRepository(long chatId){
+    public boolean containsUserInRepository(long chatId) {
         return userRepository.findById(chatId).isPresent();
     }
 
-    public String userDataCommand(long chatId){
+    public String userDataCommand(long chatId) {
         Optional<User> user = userRepository.findById(chatId);
         String regDate = new SimpleDateFormat("d.MM.yyyy hh:mm").format(user.get().getRegisteredAt());
         return String.format(
@@ -55,11 +58,11 @@ public class ButtonsOfMenu {
                 regDate);
     }
 
-    public String helpCommand(){
+    public String helpCommand() {
         return articleDataRepository.getArticleDataById(Tags.HELP.getDescription()).getData();
     }
 
-    public String aboutBotCommand(){
+    public String aboutBotCommand() {
         return articleDataRepository.getArticleDataById(Tags.ABOUT_BOT.getDescription()).getData();
     }
 
@@ -78,7 +81,7 @@ public class ButtonsOfMenu {
     }
 
     public List<MenuButtonTags> startMainMenu(long chatId) {
-        if (userRepository.findById(chatId).get().getStatus().equals(Tags.TOURIST_CHOICE.getDescription())){
+        if (userRepository.findById(chatId).get().getStatus().equals(Tags.TOURIST_CHOICE.getDescription())) {
             return TOURIST_CHOICE_LIST;
         } else if (userRepository.findById(chatId).get().getStatus().equals(Tags.LOCAL_CHOICE.getDescription())) {
             return LOCAL_CHOICE_LIST;
@@ -87,7 +90,7 @@ public class ButtonsOfMenu {
         }
     }
 
-    public List<MenuButtonTags> attractionSectionMenu(){
+    public List<MenuButtonTags> attractionSectionMenu() {
         return List.of(
                 MenuButtonTags.ATTRACTIONS_MENU_TEXT,
                 MenuButtonTags.INSIDE_CITY,
@@ -95,7 +98,7 @@ public class ButtonsOfMenu {
                 MenuButtonTags.GUIDES);
     }
 
-    public List<MenuButtonTags> foodSectionMenu(){
+    public List<MenuButtonTags> foodSectionMenu() {
         return List.of(
                 MenuButtonTags.FOOD_SECTION_TEXT,
                 MenuButtonTags.NATIONAL_KITCHEN,
@@ -103,7 +106,7 @@ public class ButtonsOfMenu {
                 MenuButtonTags.ASIAN_KITCHEN);
     }
 
-    public List<MenuButtonTags> hotelsSectionMenu(){
+    public List<MenuButtonTags> hotelsSectionMenu() {
         return List.of(
                 MenuButtonTags.HOTELS_MENU_TEXT,
                 MenuButtonTags.HOTEL,

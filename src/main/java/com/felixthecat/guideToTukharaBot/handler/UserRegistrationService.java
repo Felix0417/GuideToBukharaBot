@@ -1,7 +1,7 @@
-package com.telegramBots.GuideToBukharaBot.service;
+package com.felixthecat.guideToTukharaBot.handler;
 
-import com.telegramBots.GuideToBukharaBot.entity.User;
-import com.telegramBots.GuideToBukharaBot.model.UserRepository;
+import com.felixthecat.guideToTukharaBot.entity.User;
+import com.felixthecat.guideToTukharaBot.model.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

@@ -1,8 +1,8 @@
 package com.felixthecat.guideToTukharaBot.handler.taghandlestrategy;
 
-import com.telegramBots.GuideToBukharaBot.model.ArticleDataRepository;
-import com.telegramBots.GuideToBukharaBot.model.MenuButtonTags;
-import com.telegramBots.GuideToBukharaBot.model.Tags;
+import com.felixthecat.guideToTukharaBot.model.ArticleDataRepository;
+import com.felixthecat.guideToTukharaBot.model.MenuButtonTags;
+import com.felixthecat.guideToTukharaBot.model.Tags;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.stereotype.Component;

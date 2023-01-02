@@ -1,7 +1,7 @@
 package com.felixthecat.guideToTukharaBot.handler;
 
 import com.felixthecat.guideToTukharaBot.handler.buttonhandlestrategy.ButtonCommandStrategy;
-import com.telegramBots.GuideToBukharaBot.model.MenuButtonTags;
+import com.felixthecat.guideToTukharaBot.model.MenuButtonTags;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import one.util.streamex.StreamEx;

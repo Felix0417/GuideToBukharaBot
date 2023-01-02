@@ -1,4 +1,4 @@
-package com.telegramBots.GuideToBukharaBot.entity;
+package com.felixthecat.guideToTukharaBot.entity;
 
 import lombok.*;
 

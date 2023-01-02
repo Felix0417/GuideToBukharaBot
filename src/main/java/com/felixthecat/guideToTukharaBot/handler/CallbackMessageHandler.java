@@ -1,7 +1,7 @@
 package com.felixthecat.guideToTukharaBot.handler;
 
 import com.felixthecat.guideToTukharaBot.handler.taghandlestrategy.TagCommandStrategy;
-import com.telegramBots.GuideToBukharaBot.model.Tags;
+import com.felixthecat.guideToTukharaBot.model.Tags;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import one.util.streamex.StreamEx;

@@ -1,6 +1,6 @@
 package com.felixthecat.guideToTukharaBot.handler.taghandlestrategy;
 
-import com.telegramBots.GuideToBukharaBot.model.Tags;
+import com.felixthecat.guideToTukharaBot.model.Tags;
 import one.util.streamex.StreamEx;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

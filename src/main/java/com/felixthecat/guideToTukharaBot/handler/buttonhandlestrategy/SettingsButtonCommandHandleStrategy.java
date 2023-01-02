@@ -1,7 +1,7 @@
 package com.felixthecat.guideToTukharaBot.handler.buttonhandlestrategy;
 
-import com.telegramBots.GuideToBukharaBot.model.MenuButtonTags;
-import com.telegramBots.GuideToBukharaBot.service.ButtonsOfMenu;
+import com.felixthecat.guideToTukharaBot.handler.ButtonsOfMenu;
+import com.felixthecat.guideToTukharaBot.model.MenuButtonTags;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import one.util.streamex.StreamEx;
@@ -14,7 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 
 import java.util.List;
 
-import static com.telegramBots.GuideToBukharaBot.model.MenuButtonTags.SETTINGS;
+import static com.felixthecat.guideToTukharaBot.model.MenuButtonTags.SETTINGS;
 
 @Component
 @RequiredArgsConstructor

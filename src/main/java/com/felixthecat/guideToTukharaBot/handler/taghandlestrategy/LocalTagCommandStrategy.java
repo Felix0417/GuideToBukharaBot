@@ -1,10 +1,9 @@
 package com.felixthecat.guideToTukharaBot.handler.taghandlestrategy;
 
-import com.telegramBots.GuideToBukharaBot.entity.User;
-import com.telegramBots.GuideToBukharaBot.model.MenuButtonTags;
-import com.telegramBots.GuideToBukharaBot.model.Tags;
-import com.telegramBots.GuideToBukharaBot.model.UserRepository;
-import com.telegramBots.GuideToBukharaBot.service.ButtonsOfMenu;
+import com.felixthecat.guideToTukharaBot.entity.User;
+import com.felixthecat.guideToTukharaBot.model.MenuButtonTags;
+import com.felixthecat.guideToTukharaBot.model.Tags;
+import com.felixthecat.guideToTukharaBot.model.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -15,8 +14,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.List;
 
-import static com.telegramBots.GuideToBukharaBot.model.Tags.LOCAL_CHOICE;
-import static com.telegramBots.GuideToBukharaBot.model.Tags.TOURIST_CHOICE;
+import static com.felixthecat.guideToTukharaBot.model.Tags.LOCAL_CHOICE;
+import static com.felixthecat.guideToTukharaBot.model.Tags.TOURIST_CHOICE;
 
 @Slf4j
 @Component

@@ -1,4 +1,4 @@
-package com.telegramBots.GuideToBukharaBot.model;
+package com.felixthecat.guideToTukharaBot.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

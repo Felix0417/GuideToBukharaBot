@@ -4,11 +4,9 @@ import com.felixthecat.guideToTukharaBot.handler.ErrorMessageHandler;
 import com.felixthecat.guideToTukharaBot.handler.MessageHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import one.util.streamex.StreamEx;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.List;

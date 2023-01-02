@@ -1,6 +1,6 @@
-package com.telegramBots.GuideToBukharaBot.model;
+package com.felixthecat.guideToTukharaBot.model;
 
-import com.telegramBots.GuideToBukharaBot.entity.ArticleData;
+import com.felixthecat.guideToTukharaBot.entity.ArticleData;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 

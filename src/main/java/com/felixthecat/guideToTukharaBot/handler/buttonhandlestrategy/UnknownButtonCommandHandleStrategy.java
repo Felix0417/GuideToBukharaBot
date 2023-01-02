@@ -1,6 +1,6 @@
 package com.felixthecat.guideToTukharaBot.handler.buttonhandlestrategy;
 
-import com.telegramBots.GuideToBukharaBot.model.MenuButtonTags;
+import com.felixthecat.guideToTukharaBot.model.MenuButtonTags;
 import lombok.val;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;

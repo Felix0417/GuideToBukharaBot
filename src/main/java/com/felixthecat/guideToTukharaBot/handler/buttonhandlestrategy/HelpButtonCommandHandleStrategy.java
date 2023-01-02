@@ -1,7 +1,7 @@
 package com.felixthecat.guideToTukharaBot.handler.buttonhandlestrategy;
 
-import com.telegramBots.GuideToBukharaBot.model.MenuButtonTags;
-import com.telegramBots.GuideToBukharaBot.service.ButtonsOfMenu;
+import com.felixthecat.guideToTukharaBot.handler.ButtonsOfMenu;
+import com.felixthecat.guideToTukharaBot.model.MenuButtonTags;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.stereotype.Component;
@@ -11,7 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.List;
 
-import static com.telegramBots.GuideToBukharaBot.model.MenuButtonTags.HELP;
+import static com.felixthecat.guideToTukharaBot.model.MenuButtonTags.HELP;
 
 @Component
 @RequiredArgsConstructor

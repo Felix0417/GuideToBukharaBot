@@ -1,6 +1,6 @@
-package com.telegramBots.GuideToBukharaBot.service;
+package com.felixthecat.guideToTukharaBot.handler;
 
-import com.telegramBots.GuideToBukharaBot.model.MenuButtonTags;
+import com.felixthecat.guideToTukharaBot.model.MenuButtonTags;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,8 +1,8 @@
 package com.felixthecat.guideToTukharaBot.handler.taghandlestrategy;
 
-import com.telegramBots.GuideToBukharaBot.model.MenuButtonTags;
-import com.telegramBots.GuideToBukharaBot.model.Tags;
-import com.telegramBots.GuideToBukharaBot.service.ButtonsOfMenu;
+import com.felixthecat.guideToTukharaBot.handler.ButtonsOfMenu;
+import com.felixthecat.guideToTukharaBot.model.MenuButtonTags;
+import com.felixthecat.guideToTukharaBot.model.Tags;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -16,7 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 
 import java.util.List;
 
-import static com.telegramBots.GuideToBukharaBot.model.Tags.ATTRACTIONS_ITEM;
+import static com.felixthecat.guideToTukharaBot.model.Tags.ATTRACTIONS_ITEM;
 
 @Slf4j
 @Component
