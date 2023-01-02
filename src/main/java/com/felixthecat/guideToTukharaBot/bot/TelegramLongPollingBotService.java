@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import one.util.streamex.StreamEx;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.LongPollingBot;
 
@@ -27,6 +28,11 @@ public class TelegramLongPollingBotService extends TelegramLongPollingBot implem
     @SneakyThrows
     public void onUpdateReceived(Update update) {
         StreamEx.of(dispatcher.dispatch(update))
-                .forEach(this::execute);
+                .forEach(this::exec);
+    }
+
+    @SneakyThrows
+    private void exec(BotApiMethod method) {
+        execute(method);
     }
 }
