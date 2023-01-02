@@ -9,7 +9,6 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,7 +75,6 @@ public class ButtonsOfMenu {
         user.setStatus(data);
         userRepository.save(user);
         log.info("User has update settings: " + user);
-        startMainMenu(chatId);
     }
 
     public List<MenuButtonTags> startMainMenu(long chatId) {
@@ -89,7 +87,7 @@ public class ButtonsOfMenu {
         }
     }
 
-    protected List<MenuButtonTags> attractionSectionMenu(){
+    public List<MenuButtonTags> attractionSectionMenu(){
         return List.of(
                 MenuButtonTags.ATTRACTIONS_MENU_TEXT,
                 MenuButtonTags.INSIDE_CITY,
@@ -97,7 +95,7 @@ public class ButtonsOfMenu {
                 MenuButtonTags.GUIDES);
     }
 
-    protected List<MenuButtonTags> foodSectionMenu(){
+    public List<MenuButtonTags> foodSectionMenu(){
         return List.of(
                 MenuButtonTags.FOOD_SECTION_TEXT,
                 MenuButtonTags.NATIONAL_KITCHEN,
@@ -105,7 +103,7 @@ public class ButtonsOfMenu {
                 MenuButtonTags.ASIAN_KITCHEN);
     }
 
-    protected List<MenuButtonTags> hotelsSectionMenu(){
+    public List<MenuButtonTags> hotelsSectionMenu(){
         return List.of(
                 MenuButtonTags.HOTELS_MENU_TEXT,
                 MenuButtonTags.HOTEL,

@@ -1,4 +1,4 @@
-package com.telegramBots.GuideToBukharaBot.service.strategies;
+package com.telegramBots.GuideToBukharaBot.service.strategies.buttonStrategies;
 
 import com.telegramBots.GuideToBukharaBot.service.ButtonsOfMenu;
 import one.util.streamex.StreamEx;
@@ -27,7 +27,7 @@ public class SettingsButtonStrategy extends AbstractButtonStrategy {
 
         var message = new SendMessage();
         message.setText(tags.get(0).getDescription());
-        message.setChatId(chatId);
+        message.setChatId(String.valueOf(chatId));
         message.setReplyMarkup(getNewInLineKeyboardMarkup(buttons));
         return message;
     }

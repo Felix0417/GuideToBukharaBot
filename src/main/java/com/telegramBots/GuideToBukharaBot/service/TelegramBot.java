@@ -4,7 +4,9 @@ import com.telegramBots.GuideToBukharaBot.config.BotConfig;
 import com.telegramBots.GuideToBukharaBot.model.ArticleDataRepository;
 import com.telegramBots.GuideToBukharaBot.model.MenuButtonTags;
 import com.telegramBots.GuideToBukharaBot.model.Tags;
-import com.telegramBots.GuideToBukharaBot.service.strategies.ButtonStrategy;
+import com.telegramBots.GuideToBukharaBot.service.strategies.buttonStrategies.ButtonStrategy;
+import com.telegramBots.GuideToBukharaBot.service.strategies.menuStrategies.SectionMenuButtonStrategy;
+import com.telegramBots.GuideToBukharaBot.service.strategies.userStatusStrategies.UserStatusStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -32,8 +34,13 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
     private final UserRegistrationService userRegistrationService;
     private final LoadLeftMenu leftMenu;
     private final Map<MenuButtonTags, ButtonStrategy> strategyMap;
+    private final Map<Tags, SectionMenuButtonStrategy> menuStrategy;
+    private final Map<Tags, UserStatusStrategy> changeStatusStrategy;
     private MenuButtonTags menuButtonTags;
     private Tags tags;
+
+    private final List<Tags> choiceTags = List.of(Tags.TOURIST_CHOICE, Tags.LOCAL_CHOICE);
+    private final List<Tags> itemTags = List.of(Tags.HOTELS_ITEM, Tags.FOOD_ITEM, Tags.ATTRACTIONS_ITEM);
 
     @Override
     public String getBotUsername() {
@@ -166,27 +173,20 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
             chatId = update.getCallbackQuery().getFrom().getId();
             if (Arrays.stream(Tags.values()).map(Tags::toString).anyMatch(x -> x.equalsIgnoreCase(messageText))) {
                 tags = Tags.valueOf(messageText);
-                switch (tags) {
-                    case TOURIST_CHOICE:
-                    case LOCAL_CHOICE:
-                        execute(buttons.editMessage(chatId, update.getCallbackQuery().getMessage().getMessageId()));
-                        buttons.registerUserStatus(tags.getDescription(), chatId);
-                        break;
-                    case ATTRACTIONS_ITEM:
-                        drawingButtons(chatId, buttons.attractionSectionMenu());
-                        break;
-                    case FOOD_ITEM:
-                        drawingButtons(chatId, buttons.foodSectionMenu());
-                        break;
-                    case HOTELS_ITEM:
-                        drawingButtons(chatId, buttons.hotelsSectionMenu());
-                        break;
-                    default:
-                        sendMessage(chatId, articleDataRepository.getArticleDataById(tags.getDescription()).getData());
-                        String url = articleDataRepository.getArticleDataByAddress(tags.getDescription()).getAddress();
-                        if (url != null) {
-                            drawingUrlButton(chatId, url);
-                        }
+                if(choiceTags.contains(tags)) {
+                    var message = changeStatusStrategy.get(tags)
+                            .apply(chatId, update.getCallbackQuery().getMessage().getMessageId());
+                    execute(message);
+                }else if(itemTags.contains(tags)) {
+                    var message = menuStrategy.get(tags)
+                            .apply(chatId);
+                    executeMessage(message);
+                }else {
+                    sendMessage(chatId, articleDataRepository.getArticleDataById(tags.getDescription()).getData());
+                    String url = articleDataRepository.getArticleDataByAddress(tags.getDescription()).getAddress();
+                    if (url != null) {
+                        drawingUrlButton(chatId, url);
+                    }
                 }
             } else if (MenuButtonTags.URL_BACK_TO_MAIN_MENU.getCommand().equals(messageText)) {
                 buttons.startMainMenu(chatId);

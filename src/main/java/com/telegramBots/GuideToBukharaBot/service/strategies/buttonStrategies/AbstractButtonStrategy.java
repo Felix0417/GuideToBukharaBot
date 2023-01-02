@@ -1,4 +1,4 @@
-package com.telegramBots.GuideToBukharaBot.service.strategies;
+package com.telegramBots.GuideToBukharaBot.service.strategies.buttonStrategies;
 
 import com.telegramBots.GuideToBukharaBot.model.MenuButtonTags;
 import lombok.AllArgsConstructor;

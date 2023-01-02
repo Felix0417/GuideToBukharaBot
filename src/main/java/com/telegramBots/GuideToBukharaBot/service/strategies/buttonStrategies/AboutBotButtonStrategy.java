@@ -1,13 +1,8 @@
-package com.telegramBots.GuideToBukharaBot.service.strategies;
+package com.telegramBots.GuideToBukharaBot.service.strategies.buttonStrategies;
 
 import com.telegramBots.GuideToBukharaBot.service.ButtonsOfMenu;
-import com.telegramBots.GuideToBukharaBot.service.TelegramBot;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-
-import java.util.function.Function;
 
 import static com.telegramBots.GuideToBukharaBot.model.MenuButtonTags.ABOUT_BOT;
 
@@ -24,7 +19,7 @@ public class AboutBotButtonStrategy extends AbstractButtonStrategy {
     public SendMessage apply(long chatId) {
         var message = new SendMessage();
         message.setText(buttons.aboutBotCommand());
-        message.setChatId(chatId);
+        message.setChatId(String.valueOf(chatId));
         return message;
     }
 }

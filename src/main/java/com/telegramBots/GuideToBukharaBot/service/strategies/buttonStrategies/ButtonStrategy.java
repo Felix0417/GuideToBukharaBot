@@ -1,4 +1,4 @@
-package com.telegramBots.GuideToBukharaBot.service.strategies;
+package com.telegramBots.GuideToBukharaBot.service.strategies.buttonStrategies;
 
 import com.telegramBots.GuideToBukharaBot.model.MenuButtonTags;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -6,7 +6,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.List;
-import java.util.function.Function;
 
 public interface ButtonStrategy {
 
@@ -26,4 +25,5 @@ public interface ButtonStrategy {
         inlineKeyboardButton.setText(tag.getDescription());
         return List.of(inlineKeyboardButton);
     }
+
 }

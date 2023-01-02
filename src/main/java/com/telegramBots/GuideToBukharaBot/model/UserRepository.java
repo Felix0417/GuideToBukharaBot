@@ -9,5 +9,5 @@ import java.util.List;
 public interface UserRepository extends CrudRepository<User, Long> {
 
     @Query("select c.id FROM User c")
-    public List<Long> findAllId();
+    List<Long> findAllId();
 }
