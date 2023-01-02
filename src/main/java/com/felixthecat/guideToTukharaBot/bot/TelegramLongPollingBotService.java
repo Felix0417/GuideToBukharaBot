@@ -5,6 +5,7 @@ import com.felixthecat.guideToTukharaBot.handler.LoadLeftMenu;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import one.util.streamex.StreamEx;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
@@ -14,6 +15,7 @@ import org.telegram.telegrambots.meta.generics.LongPollingBot;
 
 import javax.annotation.PostConstruct;
 
+@Service
 @RequiredArgsConstructor
 public class TelegramLongPollingBotService extends TelegramLongPollingBot implements LongPollingBot {
     private final BotConfig config;
