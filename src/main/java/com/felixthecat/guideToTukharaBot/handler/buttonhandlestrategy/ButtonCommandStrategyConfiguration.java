@@ -14,7 +14,7 @@ import static java.util.function.Function.identity;
 public class ButtonCommandStrategyConfiguration {
 
     @Bean
-    public Map<MenuButtonTags, ButtonCommandStrategy> getCommandStrategiesMap(List<ButtonCommandStrategy> strategyList) {
+    public Map<MenuButtonTags, ButtonCommandStrategy> getButtonCommandStrategiesMap(List<ButtonCommandStrategy> strategyList) {
         return StreamEx.of(strategyList).toMap(ButtonCommandStrategy::getKey, identity());
     }
 }

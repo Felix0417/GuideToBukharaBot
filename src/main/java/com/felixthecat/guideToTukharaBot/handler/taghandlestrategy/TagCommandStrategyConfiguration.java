@@ -14,7 +14,7 @@ import static java.util.function.Function.identity;
 public class TagCommandStrategyConfiguration {
 
     @Bean
-    public Map<Tags, TagCommandStrategy> getCommandStrategiesMap(List<TagCommandStrategy> strategyList) {
+    public Map<Tags, TagCommandStrategy> getTagCommandStrategiesMap(List<TagCommandStrategy> strategyList) {
         return StreamEx.of(strategyList).toMap(TagCommandStrategy::getKey, identity());
     }
 }

@@ -25,7 +25,6 @@ public class TelegramLongPollingBotService extends TelegramLongPollingBot implem
     }
 
     @Override
-    @SneakyThrows
     public void onUpdateReceived(Update update) {
         StreamEx.of(dispatcher.dispatch(update))
                 .forEach(this::exec);
