@@ -31,8 +31,8 @@ public class TextMessageHandler implements MessageHandler {
         return StreamEx.of(MenuButtonTags.values())
                 .map(MenuButtonTags::getCommand)
                 .filter(Objects::nonNull)
-                .findAny(t -> text.replace("/", "").equals(t.replace("/", "")))
-                .map(MenuButtonTags::valueOf)
+                .findAny(text::equals)
+                .map(MenuButtonTags::fromCommand)
                 .map(commandStrategyMap::get)
                 .orElse(commandStrategyMap.get(null))
                 .handle(update);

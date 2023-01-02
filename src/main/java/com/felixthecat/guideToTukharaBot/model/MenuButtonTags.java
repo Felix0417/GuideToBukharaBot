@@ -2,6 +2,10 @@ package com.felixthecat.guideToTukharaBot.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import one.util.streamex.StreamEx;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 @AllArgsConstructor
 @Getter
@@ -57,4 +61,11 @@ public enum MenuButtonTags {
 
     private final String command;
     private final String description;
+
+    public static MenuButtonTags fromCommand(String command) {
+        return Arrays.stream(MenuButtonTags.values()).filter(x -> x.getCommand() != null)
+                .filter(x -> x.getCommand().equals(command))
+                .findFirst()
+                .get();
+    }
 }
