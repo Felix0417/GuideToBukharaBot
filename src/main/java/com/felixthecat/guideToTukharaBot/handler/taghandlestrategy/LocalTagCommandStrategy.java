@@ -33,7 +33,7 @@ public class LocalTagCommandStrategy implements TagCommandStrategy {
     public List<BotApiMethod> handle(Update update) {
         val message = update.getMessage();
         val messageId = message.getMessageId();
-        val chatId = message.getChatId();
+        val chatId = update.getCallbackQuery().getFrom().getId();
         User user = repository.findById(chatId).get();
         user.setStatus(TOURIST_CHOICE.getDescription());
         repository.save(user);

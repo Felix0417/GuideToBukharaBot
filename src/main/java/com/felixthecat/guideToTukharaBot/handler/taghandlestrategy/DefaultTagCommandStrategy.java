@@ -29,7 +29,7 @@ public class DefaultTagCommandStrategy implements TagCommandStrategy {
     @Override
     public List<BotApiMethod> handle(Update update) {
         val message = update.getMessage();
-        val chatId = message.getChatId();
+        val chatId = update.getCallbackQuery().getFrom().getId();
         val messageText = update.getCallbackQuery().getData();
 
         val tag = Tags.valueOf(messageText);

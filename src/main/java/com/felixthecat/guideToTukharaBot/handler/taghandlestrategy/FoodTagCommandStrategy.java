@@ -33,7 +33,7 @@ public class FoodTagCommandStrategy implements TagCommandStrategy {
     @Override
     public List<BotApiMethod> handle(Update update) {
         val message = update.getMessage();
-        val chatId = message.getChatId();
+        val chatId = update.getCallbackQuery().getFrom().getId();
         return List.of(getSendMessage(chatId, buttons.foodSectionMenu()));
     }
 
