@@ -164,11 +164,13 @@ public class TelegramBot extends TelegramLongPollingBot implements LongPollingBo
                         var message = strategyMap.get(menuButtonTags)
                                 .apply(chatId);
                         executeMessage(message);
+                        break;
                 }
             } else {
                 wrongRequestFromUser(chatId);
             }
-        } else if (update.hasCallbackQuery()) {
+        }
+        else if (update.hasCallbackQuery()) {
             messageText = update.getCallbackQuery().getData();
             chatId = update.getCallbackQuery().getFrom().getId();
             if (Arrays.stream(Tags.values()).map(Tags::toString).anyMatch(x -> x.equalsIgnoreCase(messageText))) {

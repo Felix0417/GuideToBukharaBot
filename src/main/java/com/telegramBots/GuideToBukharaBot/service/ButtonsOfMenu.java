@@ -34,7 +34,7 @@ public class ButtonsOfMenu {
     private final UserRepository userRepository;
     private final ArticleDataRepository articleDataRepository;
 
-    protected String startCommand(Update update) {
+    public String startCommand(Update update) {
         var chat = update.getMessage().getChat();
         String answer = String.format(MenuButtonTags.GREETINGS_TEXT.getDescription(), chat.getUserName());
         log.info("Replied to user " + chat.getUserName());
