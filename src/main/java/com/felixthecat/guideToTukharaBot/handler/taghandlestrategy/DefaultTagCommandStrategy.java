@@ -3,6 +3,7 @@ package com.felixthecat.guideToTukharaBot.handler.taghandlestrategy;
 import com.felixthecat.guideToTukharaBot.model.ArticleDataRepository;
 import com.felixthecat.guideToTukharaBot.model.MenuButtonTags;
 import com.felixthecat.guideToTukharaBot.model.Tags;
+import com.felixthecat.guideToTukharaBot.model.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.stereotype.Component;
@@ -16,10 +17,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
-public class DefaultTagCommandStrategy implements TagCommandStrategy {
+public class DefaultTagCommandStrategy extends AbstractTagCommandStrategy{
 
     private final ArticleDataRepository articleDataRepository;
+
+    public DefaultTagCommandStrategy(UserRepository repository, ArticleDataRepository articleDataRepository) {
+        super(repository);
+        this.articleDataRepository = articleDataRepository;
+    }
 
     @Override
     public Tags getKey() {
@@ -32,21 +37,20 @@ public class DefaultTagCommandStrategy implements TagCommandStrategy {
         val chatId = update.getCallbackQuery().getFrom().getId();
         val messageText = update.getCallbackQuery().getData();
 
-        val tag = Tags.valueOf(messageText);
+        val menuButtonTag = MenuButtonTags.valueOf(messageText);
 
         var result = new ArrayList<BotApiMethod>();
         var data = new SendMessage();
         data.setChatId(String.valueOf(chatId));
-        data.setText(articleDataRepository.getArticleDataById(tag.getDescription()).getData());
+        data.setText(articleDataRepository.getArticleDataById(menuButtonTag.getCommand()).getData());
         result.add(data);
 
-        String url = articleDataRepository.getArticleDataByAddress(tag.getDescription()).getAddress();
+        String url = articleDataRepository.getArticleDataByAddress(menuButtonTag.getCommand()).getAddress();
+
         if (url != null) {
             var buttons = new ArrayList<List<InlineKeyboardButton>>();
             buttons.add(List.of(
-                    getInlineKeyboardButton(MenuButtonTags.URL_GET_BUTTON, url),
-                    getInlineKeyboardButton(MenuButtonTags.URL_BACK_TO_MAIN_MENU, null)));
-
+                    getInlineKeyboardButton(MenuButtonTags.URL_GET_BUTTON, url)));
             var additionalData = messageForDrawingButtons(chatId, MenuButtonTags.URL_TEXT);
             additionalData.setReplyMarkup(getNewInLineKeyboardMarkup(buttons));
             result.add(additionalData);
@@ -73,9 +77,5 @@ public class DefaultTagCommandStrategy implements TagCommandStrategy {
         return message;
     }
 
-    protected InlineKeyboardMarkup getNewInLineKeyboardMarkup(List<List<InlineKeyboardButton>> buttons) {
-        var inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        inlineKeyboardMarkup.setKeyboard(buttons);
-        return inlineKeyboardMarkup;
-    }
+
 }

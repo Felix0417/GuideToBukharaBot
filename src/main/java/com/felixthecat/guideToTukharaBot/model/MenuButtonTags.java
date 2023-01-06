@@ -39,25 +39,25 @@ public enum MenuButtonTags {
 
     //Attractions menu
     ATTRACTIONS_MENU_TEXT(null, "Выберите локацию:"),
-    INSIDE_CITY(Tags.ATTRACTIONS_INSIDE_CITY.toString(), "В Городе"),
-    OUTSIDE_CITY(Tags.ATTRACTIONS_OUTSIDE_CITY.toString(), "За Городом"),
-    GUIDES(Tags.CONTACT_GUIDES.toString(), "Гиды"),
+    INSIDE_CITY(Tags.ATTRACTIONS_INSIDE_CITY.getDescription(), "В Городе"),
+    OUTSIDE_CITY(Tags.ATTRACTIONS_OUTSIDE_CITY.getDescription(), "За Городом"),
+    GUIDES(Tags.CONTACT_GUIDES.getDescription(), "Гиды"),
 
     //Food section menu
     FOOD_SECTION_TEXT(null, "Выберите интересующую вас кухню:"),
-    NATIONAL_KITCHEN(Tags.NATIONAL_KITCHEN.toString(), "Национальная кухня"),
-    EUROPEAN_KITCHEN(Tags.EUROPEAN_KITCHEN.toString(), "Европейская кухня"),
-    ASIAN_KITCHEN(Tags.ASIAN_KITCHEN.toString(), "Азиатская кухня"),
+    NATIONAL_KITCHEN(Tags.NATIONAL_KITCHEN.getDescription(), "Национальная кухня"),
+    EUROPEAN_KITCHEN(Tags.EUROPEAN_KITCHEN.getDescription(), "Европейская кухня"),
+    ASIAN_KITCHEN(Tags.ASIAN_KITCHEN.getDescription(), "Азиатская кухня"),
 
     //Hotels section menu
     HOTELS_MENU_TEXT(null, "Выберите тип отеля:"),
-    HOTEL( Tags.HOTELS.toString(), "Гостиница / Отель"),
-    GUEST_HOUSE(Tags.GUEST_HOUSES.toString(), "Гостевые дома"),
+    HOTEL( Tags.HOTELS.getDescription(), "Гостиница / Отель"),
+    GUEST_HOUSE(Tags.GUEST_HOUSES.getDescription(), "Гостевые дома"),
 
     // Url button
     URL_TEXT(null, "Вы можете узнать больше информации об этом, или перейти в главное меню"),
     URL_GET_BUTTON(null, "Узнать подробнее"),
-    URL_BACK_TO_MAIN_MENU(START.command, "Вернуться в главное меню");
+    URL_BACK_TO_MAIN_MENU(START.toString(), "Вернуться в главное меню");
 
     private final String command;
     private final String description;

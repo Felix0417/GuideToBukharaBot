@@ -1,7 +1,7 @@
 package com.felixthecat.guideToTukharaBot.dispatcher;
 
-import com.felixthecat.guideToTukharaBot.handler.ErrorMessageHandler;
-import com.felixthecat.guideToTukharaBot.handler.MessageHandler;
+import com.felixthecat.guideToTukharaBot.handler.messagehandler.ErrorMessageHandler;
+import com.felixthecat.guideToTukharaBot.handler.messagehandler.MessageHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import one.util.streamex.StreamEx;

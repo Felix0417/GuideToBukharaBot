@@ -1,4 +1,4 @@
-package com.felixthecat.guideToTukharaBot.handler;
+package com.felixthecat.guideToTukharaBot.handler.messagehandler;
 
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;

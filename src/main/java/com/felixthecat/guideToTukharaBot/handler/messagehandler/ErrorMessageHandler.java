@@ -1,4 +1,4 @@
-package com.felixthecat.guideToTukharaBot.handler;
+package com.felixthecat.guideToTukharaBot.handler.messagehandler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

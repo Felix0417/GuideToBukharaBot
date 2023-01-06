@@ -40,6 +40,7 @@ public class StartButtonCommandHandleStrategy implements ButtonCommandStrategy {
         if (!buttons.containsUserInRepository(chatId)) {
             userRegistrationService.register(update);
             result.add(drawingButtons(chatId, buttons.changeUserStatus()));
+            return result;
         }
         result.add(drawingButtons(chatId, buttons.startMainMenu(chatId)));
 

@@ -1,4 +1,4 @@
-package com.felixthecat.guideToTukharaBot.handler;
+package com.felixthecat.guideToTukharaBot.handler.messagehandler;
 
 import com.felixthecat.guideToTukharaBot.handler.buttonhandlestrategy.ButtonCommandStrategy;
 import com.felixthecat.guideToTukharaBot.model.MenuButtonTags;
