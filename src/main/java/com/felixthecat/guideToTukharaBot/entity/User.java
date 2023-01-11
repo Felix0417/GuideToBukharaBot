@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
+import java.time.Instant;
 
 @Entity
 @Table(name = "public.user")
@@ -33,5 +34,5 @@ public class User {
     private String status;
 
     @Column(name="registered_at")
-    private Timestamp registeredAt;
+    private Instant registeredAt;
 }

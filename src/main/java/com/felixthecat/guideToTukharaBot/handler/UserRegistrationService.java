@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 
 @Service
 @Slf4j
@@ -25,7 +26,7 @@ public class UserRegistrationService {
                 .firstName(chat.getFirstName())
                 .lastName(chat.getLastName())
                 .userName(chat.getUserName())
-                .registeredAt(new Timestamp(System.currentTimeMillis()))
+                .registeredAt(Instant.now())
                 .build();
 
         userRepository.save(user);

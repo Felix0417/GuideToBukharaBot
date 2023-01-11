@@ -1,22 +1,22 @@
 package com.felixthecat.guideToTukharaBot.handler.messagehandler;
 
-import com.felixthecat.guideToTukharaBot.handler.buttonhandlestrategy.ButtonCommandStrategy;
-import com.felixthecat.guideToTukharaBot.model.MenuButtonTags;
+import com.felixthecat.guideToTukharaBot.handler.buttonhandlestrategy.newhandlerstrategy.CommandStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import one.util.streamex.StreamEx;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
 public class TextMessageHandler implements MessageHandler {
-    private final Map<MenuButtonTags, ButtonCommandStrategy> commandStrategyMap;
+
+    @Resource
+    private final Map<String, CommandStrategy> commandStrategyMap;
 
     @Override
     public boolean canHandle(Update update) {
@@ -27,14 +27,8 @@ public class TextMessageHandler implements MessageHandler {
     public List<BotApiMethod> handle(Update update) {
         val message = update.getMessage();
         val text = message.getText();
-
-        return StreamEx.of(MenuButtonTags.values())
-                .map(MenuButtonTags::getCommand)
-                .filter(Objects::nonNull)
-                .findAny(text::equals)
-                .map(MenuButtonTags::fromCommand)
-                .map(commandStrategyMap::get)
-                .orElse(commandStrategyMap.get(null))
-                .handle(update);
+        return commandStrategyMap
+                .getOrDefault(text,commandStrategyMap.get(null))
+                .handler(update);
     }
 }

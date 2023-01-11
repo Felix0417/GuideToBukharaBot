@@ -9,20 +9,20 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "local.data.bukhara")
+@Table(name = "local_data_bukhara")
 @Data
 public class ArticleData {
 
     @Id
     @Column(name = "id")
-    String id;
+    private String id;
 
     @Column(name = "article_data")
     @Type(type = "text")
-    String data;
+    private String data;
 
     @Column(name = "article_address")
     @Type(type = "text")
-    String address;
+    private String address;
 
 }

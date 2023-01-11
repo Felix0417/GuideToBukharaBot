@@ -57,15 +57,22 @@ public enum MenuButtonTags {
     // Url button
     URL_TEXT(null, "Вы можете узнать больше информации об этом, или перейти в главное меню"),
     URL_GET_BUTTON(null, "Узнать подробнее"),
-    URL_BACK_TO_MAIN_MENU(START.toString(), "Вернуться в главное меню");
+    URL_BACK_TO_MAIN_MENU(START.toString(), "Вернуться в главное меню"),
+
+//    -----------------------------
+//    Experimental
+    ATTRACTIONS_ITEM("ATTRACTIONS_ITEM", "Достопримечательности");
+//    --------------------------------
+
 
     private final String command;
     private final String description;
 
     public static MenuButtonTags fromCommand(String command) {
-        return Arrays.stream(MenuButtonTags.values()).filter(x -> x.getCommand() != null)
-                .filter(x -> x.getCommand().equals(command))
+        MenuButtonTags tags = Arrays.stream(MenuButtonTags.values()).filter(x -> x.getCommand() != null)
+                .filter(x -> x.getCommand().equalsIgnoreCase(command))
                 .findFirst()
                 .get();
+        return tags;
     }
 }
