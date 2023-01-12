@@ -1,4 +1,4 @@
-package com.felixthecat.guideToTukharaBot.handler.buttonhandlestrategy.newhandlerstrategy;
+package com.felixthecat.guideToTukharaBot.handler.handlerstrategy;
 
 import one.util.streamex.StreamEx;
 import org.springframework.context.annotation.Bean;

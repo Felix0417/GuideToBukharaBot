@@ -1,6 +1,6 @@
 package com.felixthecat.guideToTukharaBot.handler.messagehandler;
 
-import com.felixthecat.guideToTukharaBot.handler.taghandlestrategy.TagCommandStrategy;
+import com.felixthecat.guideToTukharaBot.handler.callbackstrategy.CallbackStrategy;
 import com.felixthecat.guideToTukharaBot.model.Tags;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -17,7 +18,8 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class CallbackMessageHandler implements MessageHandler {
 
-    private final Map<Tags, TagCommandStrategy> tagsTagCommandStrategyMap;
+    @Resource(name = "getCallbackStrategyMap")
+    private final Map<String, CallbackStrategy> callbackStrategyMap;
 
     @Override
     public boolean canHandle(Update update) {
@@ -27,14 +29,8 @@ public class CallbackMessageHandler implements MessageHandler {
     @Override
     public List<BotApiMethod> handle(Update update) {
         val text = update.getCallbackQuery().getData();
-
-        return StreamEx.of(Tags.values())
-                .map(Enum::toString)
-                .filter(Objects::nonNull)
-                .findAny(text::equalsIgnoreCase)
-                .map(Tags::valueOf)
-                .map(tagsTagCommandStrategyMap::get)
-                .orElse(tagsTagCommandStrategyMap.get(null))
-                .handle(update);
+        return callbackStrategyMap
+                .getOrDefault(text, callbackStrategyMap.get(null))
+                .handler(update);
     }
 }

@@ -1,4 +1,4 @@
-package com.felixthecat.guideToTukharaBot.handler.buttonhandlestrategy.newhandlerstrategy;
+package com.felixthecat.guideToTukharaBot.handler.handlerstrategy;
 
 import com.felixthecat.guideToTukharaBot.model.StartCommandsRepository;
 import com.felixthecat.guideToTukharaBot.model.UserRepository;
