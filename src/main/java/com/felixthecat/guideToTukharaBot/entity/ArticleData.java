@@ -15,7 +15,10 @@ public class ArticleData {
 
     @Id
     @Column(name = "id")
-    private String id;
+    private int id;
+
+    @Column(name = "commandName")
+    private String commandName;
 
     @Column(name = "article_data")
     @Type(type = "text")

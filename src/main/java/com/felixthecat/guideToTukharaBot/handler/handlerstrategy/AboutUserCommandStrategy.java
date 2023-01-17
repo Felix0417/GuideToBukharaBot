@@ -39,7 +39,7 @@ public class AboutUserCommandStrategy extends AbstractCommandStrategy {
         var localDateTime = LocalDateTime
                 .ofInstant(user.getRegisteredAt(), ZoneId.of("Asia/Samarkand"))
                 .format(DateTimeFormatter.ofPattern("d.MM.yyyy HH:mm"));
-        message.setText(String.format(text, user.getChatId(), user.getUserName(), localDateTime));
+        message.setText(String.format(text, user.getChatId(), user.getFirstName(), localDateTime));
         return List.of(message);
     }
 }

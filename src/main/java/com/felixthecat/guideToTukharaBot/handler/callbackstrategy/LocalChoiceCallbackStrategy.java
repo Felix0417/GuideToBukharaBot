@@ -1,6 +1,7 @@
 package com.felixthecat.guideToTukharaBot.handler.callbackstrategy;
 
 
+import com.felixthecat.guideToTukharaBot.entity.User;
 import com.felixthecat.guideToTukharaBot.model.CallbacksRepository;
 import com.felixthecat.guideToTukharaBot.model.UserRepository;
 import lombok.RequiredArgsConstructor;

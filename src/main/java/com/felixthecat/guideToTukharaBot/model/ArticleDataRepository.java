@@ -11,4 +11,11 @@ public interface ArticleDataRepository extends CrudRepository<ArticleData, Strin
 
     @Query("select url from ArticleData url where url.id = ?1")
     ArticleData getArticleDataByAddress(String articleId);
+
+    @Query(value = "select ldb.* \n" +
+            " from callbacks c \n" +
+            " left join callbacks_local_data cld on c.id = cld.callback_id \n" +
+            " left join local_data_bukhara ldb on cld.local_data_id = ldb.id \n" +
+            " where c.command = ?1", nativeQuery = true)
+    ArticleData getArticleDataByCommand(String command);
 }

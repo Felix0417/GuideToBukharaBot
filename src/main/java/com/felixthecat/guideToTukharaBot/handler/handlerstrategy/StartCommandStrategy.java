@@ -45,13 +45,15 @@ public class StartCommandStrategy extends AbstractCommandStrategy {
     }
 
     public void saveUser(Update update) {
-        User newUser = new User();
         var chat = update.getMessage().getChat();
-        newUser.setChatId(chat.getId());
-        newUser.setFirstName(chat.getFirstName());
-        newUser.setLastName(chat.getLastName());
-        newUser.setUserName(chat.getUserName());
-        newUser.setRegisteredAt(Instant.now());
-        userRepository.save(newUser);
+        var user = User.builder()
+                .chatId(chat.getId())
+                .firstName(chat.getFirstName())
+                .lastName(chat.getFirstName())
+                .userName(chat.getLastName())
+                .registeredAt(Instant.now())
+                .build();
+
+        userRepository.save(user);
     }
 }
