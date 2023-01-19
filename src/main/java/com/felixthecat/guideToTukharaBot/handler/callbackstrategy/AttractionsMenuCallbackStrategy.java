@@ -1,7 +1,8 @@
 package com.felixthecat.guideToTukharaBot.handler.callbackstrategy;
 
+import com.felixthecat.guideToTukharaBot.model.ArticleDataRepository;
 import com.felixthecat.guideToTukharaBot.model.CallbacksRepository;
-import lombok.RequiredArgsConstructor;
+import com.felixthecat.guideToTukharaBot.model.UserRepository;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -9,20 +10,21 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
 public class AttractionsMenuCallbackStrategy extends AbstractCallbackStrategy {
 
-    private final CallbacksRepository callbacksRepository;
+
+    public AttractionsMenuCallbackStrategy(ArticleDataRepository articleDataRepository, CallbacksRepository callbacksRepository, UserRepository userRepository) {
+        super(articleDataRepository, callbacksRepository, userRepository);
+    }
 
     @Override
     public String getKey() {
-        return "Достопримечательности";
+        return "Раздел достопримечательности";
     }
 
     @Override
     public List<BotApiMethod> handler(Update update) {
         var message = update.getCallbackQuery().getMessage();
-        var attractions = callbacksRepository.getAllByButtonType(getKey());
-        return getNewMenuMessage(message, getKey(), attractions);
+        return getNewMenuMessage(message, getKey(), getButtonsListForMenu(getKey()));
     }
 }

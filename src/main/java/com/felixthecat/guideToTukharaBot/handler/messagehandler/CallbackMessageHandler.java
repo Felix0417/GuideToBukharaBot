@@ -1,10 +1,8 @@
 package com.felixthecat.guideToTukharaBot.handler.messagehandler;
 
 import com.felixthecat.guideToTukharaBot.handler.callbackstrategy.CallbackStrategy;
-import com.felixthecat.guideToTukharaBot.model.Tags;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import one.util.streamex.StreamEx;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -12,7 +10,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor

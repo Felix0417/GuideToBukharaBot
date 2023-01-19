@@ -3,7 +3,7 @@ package com.felixthecat.guideToTukharaBot.handler.callbackstrategy.endpointscall
 import com.felixthecat.guideToTukharaBot.handler.callbackstrategy.AbstractCallbackStrategy;
 import com.felixthecat.guideToTukharaBot.model.ArticleDataRepository;
 import com.felixthecat.guideToTukharaBot.model.CallbacksRepository;
-import lombok.RequiredArgsConstructor;
+import com.felixthecat.guideToTukharaBot.model.UserRepository;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -11,13 +11,11 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
 public class GuidesEndpointCallbackStrategy extends AbstractCallbackStrategy {
 
-    private final ArticleDataRepository articleDataRepository;
-    private final CallbacksRepository callbacksRepository;
-
-    private static final String BACK_BUTTON_TEXT = "Назад";
+    public GuidesEndpointCallbackStrategy(ArticleDataRepository articleDataRepository, CallbacksRepository callbacksRepository, UserRepository userRepository) {
+        super(articleDataRepository, callbacksRepository, userRepository);
+    }
 
     @Override
     public String getKey() {
@@ -26,10 +24,6 @@ public class GuidesEndpointCallbackStrategy extends AbstractCallbackStrategy {
 
     @Override
     public List<BotApiMethod> handler(Update update) {
-        var message = update.getCallbackQuery().getMessage();
-        var articleData = articleDataRepository.getArticleDataByCommand(getKey());
-        var backCallbacks = callbacksRepository.getCallbacksByCommand(getKey());
-        backCallbacks.setDescription(BACK_BUTTON_TEXT);
-        return getNewMenuMessage(message, articleData.getData(), List.of(backCallbacks));
+        return getEndlessMessage(update, getKey());
     }
 }

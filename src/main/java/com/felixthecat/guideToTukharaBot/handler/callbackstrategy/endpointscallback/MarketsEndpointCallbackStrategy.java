@@ -11,15 +11,15 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.List;
 
 @Component
-public class OutsideCityEndpointCallbackStrategy extends AbstractCallbackStrategy {
+public class MarketsEndpointCallbackStrategy extends AbstractCallbackStrategy {
 
-    public OutsideCityEndpointCallbackStrategy(ArticleDataRepository articleDataRepository, CallbacksRepository callbacksRepository, UserRepository userRepository) {
+    public MarketsEndpointCallbackStrategy(ArticleDataRepository articleDataRepository, CallbacksRepository callbacksRepository, UserRepository userRepository) {
         super(articleDataRepository, callbacksRepository, userRepository);
     }
 
     @Override
     public String getKey() {
-        return "Достопримечательности_регион";
+        return "Рынки";
     }
 
     @Override

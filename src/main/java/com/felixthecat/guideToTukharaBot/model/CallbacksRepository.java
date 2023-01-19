@@ -16,8 +16,8 @@ public interface CallbacksRepository extends CrudRepository<Callbacks, Integer> 
     List<Callbacks> getAllByUserStatus(String userStatus);
 
     @Query(value = "select c.*" +
-            " from callbacks_to_callbacks ctc\n" +
-            " left join callbacks c on ctc.to_id = c.id\n" +
+            " from callbacks_to_callbacks ctc" +
+            " left join callbacks c on ctc.to_id = c.id" +
             " where ctc.type_button = ?1", nativeQuery = true)
     List<Callbacks> getAllByButtonType(String type);
 

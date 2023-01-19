@@ -6,20 +6,21 @@ import com.felixthecat.guideToTukharaBot.model.CallbacksRepository;
 import com.felixthecat.guideToTukharaBot.model.UserRepository;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.List;
 
 @Component
-public class OutsideCityEndpointCallbackStrategy extends AbstractCallbackStrategy {
+public class MoneyExchangeCallbackStrategy extends AbstractCallbackStrategy {
 
-    public OutsideCityEndpointCallbackStrategy(ArticleDataRepository articleDataRepository, CallbacksRepository callbacksRepository, UserRepository userRepository) {
+    public MoneyExchangeCallbackStrategy(ArticleDataRepository articleDataRepository, CallbacksRepository callbacksRepository, UserRepository userRepository) {
         super(articleDataRepository, callbacksRepository, userRepository);
     }
 
     @Override
     public String getKey() {
-        return "Достопримечательности_регион";
+        return "Обмен денег";
     }
 
     @Override

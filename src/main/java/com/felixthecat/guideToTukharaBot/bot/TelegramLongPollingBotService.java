@@ -1,7 +1,6 @@
 package com.felixthecat.guideToTukharaBot.bot;
 
 import com.felixthecat.guideToTukharaBot.dispatcher.MessageDispatcher;
-import com.felixthecat.guideToTukharaBot.handler.LoadLeftMenu;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import one.util.streamex.StreamEx;
@@ -10,18 +9,21 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.generics.LongPollingBot;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class TelegramLongPollingBotService extends TelegramLongPollingBot implements LongPollingBot {
     private final BotConfig config;
     private final MessageDispatcher dispatcher;
+    private final List<BotCommand> leftMenuCommands;
 
-    private final LoadLeftMenu leftMenu;
+    private final LeftMenuButtonsBeanConfiguration leftMenu;
 
     @Override
     public String getBotUsername() {
@@ -42,7 +44,7 @@ public class TelegramLongPollingBotService extends TelegramLongPollingBot implem
     @SneakyThrows
     @PostConstruct
     private void initLeftMenu() {
-        execute(new SetMyCommands(leftMenu.getListOfCommands(), new BotCommandScopeDefault(), "ru"));
+        execute(new SetMyCommands(leftMenuCommands, new BotCommandScopeDefault(), "ru"));
     }
 
     @SneakyThrows

@@ -19,7 +19,4 @@ public class Callbacks {
 
     @Column(name = "description")
     private String description;
-
-    @Column(name = "button_type")
-    private String buttonType;
 }
