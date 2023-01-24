@@ -1,7 +1,6 @@
 package com.felixthecat.guideToTukharaBot.entity;
 
 import lombok.Data;
-import org.hibernate.annotations.Type;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;

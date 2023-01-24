@@ -10,20 +10,20 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.List;
 
 @Component
-public class RecentlyArrivedSectionCallbackStrategy extends AbstractCallbackStrategy{
+public class RecentlyArrivedSectionCallbackStrategy extends AbstractCallbackStrategy {
 
-        public RecentlyArrivedSectionCallbackStrategy(ArticleDataRepository articleDataRepository, CallbacksRepository callbacksRepository, UserRepository userRepository) {
-                super(articleDataRepository, callbacksRepository, userRepository);
-        }
+    public RecentlyArrivedSectionCallbackStrategy(ArticleDataRepository articleDataRepository, CallbacksRepository callbacksRepository, UserRepository userRepository) {
+        super(articleDataRepository, callbacksRepository, userRepository);
+    }
 
-        @Override
-        public String getKey() {
-                return "Раздел для новоприбывших";
-        }
+    @Override
+    public String getKey() {
+        return "Раздел для новоприбывших";
+    }
 
-        @Override
-        public List<BotApiMethod> handler(Update update) {
-                var message = update.getCallbackQuery().getMessage();
-                return getNewMenuMessage(message, getKey(), getButtonsListForMenu(getKey()));
-        }
+    @Override
+    public List<BotApiMethod> handler(Update update) {
+        var message = update.getCallbackQuery().getMessage();
+        return getNewMenuMessage(message, getKey(), getButtonsListForMenu(getKey()));
+    }
 }

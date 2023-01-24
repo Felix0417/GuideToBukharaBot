@@ -12,7 +12,6 @@ import java.util.List;
 @Component
 public class AttractionsMenuCallbackStrategy extends AbstractCallbackStrategy {
 
-
     public AttractionsMenuCallbackStrategy(ArticleDataRepository articleDataRepository, CallbacksRepository callbacksRepository, UserRepository userRepository) {
         super(articleDataRepository, callbacksRepository, userRepository);
     }

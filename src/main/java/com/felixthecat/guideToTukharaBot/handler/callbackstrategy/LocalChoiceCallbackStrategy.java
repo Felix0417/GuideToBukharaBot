@@ -1,7 +1,5 @@
 package com.felixthecat.guideToTukharaBot.handler.callbackstrategy;
 
-
-
 import com.felixthecat.guideToTukharaBot.model.ArticleDataRepository;
 import com.felixthecat.guideToTukharaBot.model.CallbacksRepository;
 import com.felixthecat.guideToTukharaBot.model.UserRepository;

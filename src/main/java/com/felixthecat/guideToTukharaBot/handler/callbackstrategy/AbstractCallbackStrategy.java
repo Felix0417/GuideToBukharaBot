@@ -13,7 +13,6 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.MessageAutoDeleteTimerChanged;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -69,8 +68,8 @@ public abstract class AbstractCallbackStrategy implements CallbackStrategy {
 
     protected List<BotApiMethod> getEndlessMessage(Update update, String key) {
         var message = update.getCallbackQuery().getMessage();
-        var articleData = articleDataRepository.getArticleDataByCommand(getKey());
-        var backCallbacks = callbacksRepository.getCallbacksByCommand(getKey());
+        var articleData = articleDataRepository.getArticleDataByCommand(key);
+        var backCallbacks = callbacksRepository.getCallbacksByCommand(key);
         return getNewMenuMessage(message, articleData.getData(), getEndlessCallbackList(articleData, backCallbacks));
     }
 
@@ -96,7 +95,7 @@ public abstract class AbstractCallbackStrategy implements CallbackStrategy {
         log.info(String.format("User %d has change his status - %s", message.getChatId(), this.getKey()));
     }
 
-    protected List<BotApiMethod> getMainMenu(Message message){
+    protected List<BotApiMethod> getMainMenu(Message message) {
         var userStatus = userRepository.findById(message.getChatId()).get().getStatus();
         var callbacks = callbacksRepository.getAllByUserStatus(userStatus);
         return getNewMenuMessage(message, MAIN_MENU_TEXT, callbacks);

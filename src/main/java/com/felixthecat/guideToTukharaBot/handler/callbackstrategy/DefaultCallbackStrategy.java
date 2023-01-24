@@ -11,7 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.List;
 
 @Component
-public class DefaultCallbackStrategy extends AbstractCallbackStrategy{
+public class DefaultCallbackStrategy extends AbstractCallbackStrategy {
 
     public DefaultCallbackStrategy(ArticleDataRepository articleDataRepository, CallbacksRepository callbacksRepository, UserRepository userRepository) {
         super(articleDataRepository, callbacksRepository, userRepository);

@@ -1,6 +1,5 @@
 package com.felixthecat.guideToTukharaBot.handler.messagehandler;
 
-import com.felixthecat.guideToTukharaBot.handler.callbackstrategy.CallbackStrategy;
 import com.felixthecat.guideToTukharaBot.handler.handlerstrategy.CommandStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.val;

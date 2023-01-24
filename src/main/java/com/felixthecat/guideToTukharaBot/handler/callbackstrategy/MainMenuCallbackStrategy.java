@@ -10,7 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.List;
 
 @Component
-public class MainMenuCallbackStrategy extends AbstractCallbackStrategy{
+public class MainMenuCallbackStrategy extends AbstractCallbackStrategy {
     public MainMenuCallbackStrategy(ArticleDataRepository articleDataRepository, CallbacksRepository callbacksRepository, UserRepository userRepository) {
         super(articleDataRepository, callbacksRepository, userRepository);
     }
