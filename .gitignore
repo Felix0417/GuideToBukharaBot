@@ -10,5 +10,4 @@ target/
 *.iws
 *.iml
 *.ipr
-application.properties
 *.yml
